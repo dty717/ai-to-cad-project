@@ -13,8 +13,8 @@ A configurable Autodesk Fusion 360 Python script for generating a phone fixture 
 
 ## Files
 
-- [`iphone_automation_mount.py`](./iphone_automation_mount.py) — Fusion 360 generator.
-- [`iphone_automation_mount.stl`](./iphone_automation_mount.stl) — committed mesh example.
+- [`iphone_automation_mount.py`](./iphone-bed-mount/iphone-bed-mount.py) — Fusion 360 generator.
+- [`iphone_automation_mount.stl`](./iphone-bed-mount/iphone-bed-mount.stl) — committed mesh example.
 
 ## Run it
 
@@ -28,4 +28,4 @@ The script depends on Fusion 360's `adsk` API and is not a standalone system-Pyt
 
 ## Review before use
 
-The dimensions and clearances in the script are design inputs, not verified compatibility or engineering certification. Check the generated model against the actual printer and phone, inspect the feature tree and geometry, and validate fit, strength, material, and manufacturing tolerances before fabrication. The sample STL is a mesh export and does not provide the editable Fusion feature history.
+The dimensions and clearances in the script are design inputs, not verified compatibility or engineering certification. Check the generated model against the actual printer and phone, inspect the features, and update dimensions as needed before use.
