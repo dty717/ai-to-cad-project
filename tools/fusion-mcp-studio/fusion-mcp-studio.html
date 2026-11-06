@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fusion 360 MCP Studio</title>
+  <style>
+    :root {
+      --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #c9d1d9;
+      --muted: #8b949e; --accent: #1f6feb; --accent-hover: #388bfd;
+      --success: #238636; --error: #da3633; --key-color: #79c0ff;
+      --str-color: #a5d6ff; --num-color: #ff7b72; --bool-color: #d2a8ff; --null-color: #8b949e;
+    }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace; }
+    body { background: var(--bg); color: var(--text); padding: 20px; margin: 0; }
+    .container { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+    h2, h3 { margin-top: 0; margin-bottom: 8px; }
+    label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 6px; }
+    input, select, textarea, button { background: #090d13; border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: 6px; font-size: 14px; width: 100%; }
+    textarea { font-family: "Fira Code", monospace; resize: vertical; tab-size: 4; }
+    button { background: var(--accent); color: white; font-weight: bold; cursor: pointer; border: none; transition: background 0.2s; }
+    button:hover { background: var(--accent-hover); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .mini-btn { width: auto; padding: 6px 12px; font-size: 12px; background: #21262d; border: 1px solid var(--border); color: var(--text); border-radius: 6px; display: inline-flex; align-items: center; gap: 5px; }
+    .mini-btn:hover { background: #30363d; }
+    .mini-btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .mini-btn.flash { background: #8957e5; color: white; border-color: #8957e5; }
+    .mini-btn.flash:hover { background: #9e6cf4; }
+    .btn-danger { color: #f85149; }
+    .btn-danger:hover { background: rgba(218, 54, 51, 0.2); }
+    .badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+    .badge-ok { background: rgba(35, 134, 54, 0.2); color: #3fb950; }
+    .badge-err { background: rgba(218, 54, 51, 0.2); color: #f85149; }
+    #confirmToast { display: none; background: #1c2738; border: 1px solid var(--accent-hover); border-left: 5px solid #3fb950; padding: 12px 18px; border-radius: 6px; animation: fadeIn 0.25s ease; }
+    .toast-content { display: flex; justify-content: space-between; align-items: center; }
+    .toast-btn { width: auto; padding: 5px 16px; font-size: 13px; background: var(--success); margin-left: 16px; }
+    #imageResultCard { display: none; }
+    .image-preview-container { display: flex; flex-direction: column; align-items: center; background: #090d13; padding: 14px; border-radius: 6px; border: 1px solid var(--border); }
+    .image-preview-container img { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--border); box-shadow: 0 4px 14px rgba(0,0,0,0.6); }
+    .img-actions { display: flex; gap: 10px; margin-top: 10px; width: 100%; max-width: 320px; }
+    .console-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .console-actions { display: flex; gap: 8px; }
+    .console-body { background: #090d13; border: 1px solid var(--border); border-radius: 6px; padding: 12px; max-height: 480px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; font-family: "Fira Code", monospace; font-size: 13px; }
+    .log-entry { border-left: 3px solid var(--border); padding-left: 10px; }
+    .log-entry.info { border-color: var(--accent); }
+    .log-entry.success { border-color: #3fb950; }
+    .log-entry.error { border-color: var(--error); }
+    .log-title { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .tree-row { margin: 1px 0; }
+    .tree-header { cursor: pointer; user-select: none; display: inline-block; }
+    .tree-arrow { display: inline-block; width: 14px; color: var(--muted); transition: transform 0.15s; }
+    .tree-children { margin-left: 16px; padding-left: 6px; border-left: 1px dashed #30363d; }
+    .tree-children.collapsed { display: none; }
+    .tree-count { color: var(--muted); font-size: 11px; margin-left: 4px; }
+    .tree-key { color: var(--key-color); }
+    .tree-string { color: var(--str-color); word-break: break-all; }
+    .tree-number { color: var(--num-color); }
+    .tree-bool { color: var(--bool-color); }
+    .tree-null { color: var(--null-color); font-style: italic; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h2>Fusion 360 MCP Studio</h2>
+  <div class="card">
+    <div style="display: flex; gap: 12px; align-items: flex-end;">
+      <div style="flex: 3;"><label>Proxy Endpoint URL:</label><input type="text" id="endpoint" value="http://127.0.0.1:27183/mcp"></div>
+      <div style="flex: 1;"><label>Session Status:</label><span id="statusBadge" class="badge badge-err">Disconnected</span></div>
+      <div style="flex: 1;"><button id="btnConnect" onclick="connectMcp()">Connect</button></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+      <div style="flex: 1; min-width: 280px;">
+        <label for="scriptSelect" style="font-weight: bold;">Select Python Script:</label>
+        <select id="scriptSelect" onchange="onScriptSelectionChanged()">
+          <optgroup label="⭐ Basic & Templates">
+            <option value="userMessageBox">Active Document Message Box (Your Template)</option>
+            <option value="inspectDoc">Inspect Workspace & Document Info</option>
+          </optgroup>
+          <optgroup label="🧱 3D Modeling Operations">
+            <option value="createBox">Create 10cm Extruded Box</option>
+            <option value="createCylinder">Create Extruded Cylinder</option>
+          </optgroup>
+          <optgroup id="customScriptsGroup" label="📁 Custom Fusion 360 Scripts (Click 'Scan' to populate"></optgroup>
+        </select>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: flex-end;">
+        <button class="mini-btn primary" id="btnScanCustom" disabled onclick="scanFusionCustomScripts()" title="Scan Fusion 360's local API/Scripts folder">🔍 Scan Fusion Scripts</button>
+        <button class="mini-btn flash" id="btnRunNative" disabled onclick="runSelectedScriptNatively()" title="Executes selected script directly from disk inside Fusion 360">⚡ Run from Host Disk</button>
+        <button class="mini-btn" onclick="document.getElementById('fileInput').click()" title="Load local .py file">📂 Open .py</button>
+        <input type="file" id="fileInput" accept=".py" style="display: none;" onchange="handleLocalFileSelect(event)">
+        <button class="mini-btn" id="btnScreenshot" disabled onclick="captureScreenshot()">📸 Screenshot</button>
+      </div>
+    </div>
+    <textarea id="pythonCode" rows="15"></textarea>
+    <div style="margin-top: 12px; display: flex; gap: 10px;"><button id="btnRunPython" style="flex: 1;" disabled onclick="executeScript()">▶ Run Editor Script via fusion_mcp_execute</button></div>
+  </div>
+  <div id="confirmToast"><div class="toast-content"><div><strong id="toastTitle">✅ Execution Finished!</strong><span id="toastMsg" style="margin-left: 8px; color: var(--text);">Operation complete.</span></div><button class="toast-btn" onclick="acknowledgeConfirm()">Confirm / OK</button></div></div>
+  <div class="card" id="imageResultCard"><div style="display: flex; justify-content: space-between; align-items: center;"><h3>🖼️ Picture Result</h3><span id="imageMeta" style="font-size: 12px; color: var(--muted);"></span></div><div class="image-preview-container"><img id="resultImage" src="" alt="Screenshot"><div class="img-actions"><button class="mini-btn" style="flex: 1;" onclick="downloadImage()">💾 Download PNG</button><button class="mini-btn btn-danger" style="flex: 1;" onclick="clearImage()">Close Picture</button></div></div></div>
+  <div class="card"><div class="console-header"><h3>Output Console</h3><div class="console-actions"><button class="mini-btn" onclick="expandAllTrees()">Expand All</button><button class="mini-btn" onclick="collapseAllTrees()">Collapse All</button><button class="mini-btn btn-danger" onclick="clearConsole()">🗑️ Clear Console</button></div></div><div id="consoleBody" class="console-body"><div class="log-entry info"><div class="log-title">[System] Ready</div><div>Awaiting connection to MCP server...</div></div></div></div>
+</div>
+<script>
+  let requestId = 1, mcpSessionId = null, toolsList = [], discoveredCustomScripts = {}, currentCustomScriptPath = null;
+  const builtInScripts = {
+    userMessageBox: `"""This file acts as the main module for this script."""
+import traceback
+import adsk.core
+import adsk.fusion
+app = adsk.core.Application.get()
+ui = app.userInterface
+def run(_context: str):
+    """This function is called by Fusion when the script is run."""
+    try:
+        ui.messageBox(f'"{app.activeDocument.name}" is the active Document.')
+    except:
+        app.log(f'Failed:\\n{traceback.format_exc()}')
+`,
+    inspectDoc: `import adsk.core, adsk.fusion
+def run(_context: str):
+    app = adsk.core.Application.get()
+    doc = app.activeDocument
+    design = adsk.fusion.Design.cast(app.activeProduct)
+    print(f"Active Document: {doc.name}")
+    print(f"Product Type: {app.activeProduct.productType}")
+    if design:
+        print(f"Root Component: {design.rootComponent.name}")
+        print(f"Bodies in Root: {design.rootComponent.bRepBodies.count}")
+`,
+    createBox: `import adsk.core, adsk.fusion
+def run(_context: str):
+    app = adsk.core.Application.get()
+    design = adsk.fusion.Design.cast(app.activeProduct)
+    root = design.rootComponent
+    sketch = root.sketches.add(root.xYConstructionPlane)
+    sketch.sketchCurves.sketchLines.addTwoPointRectangle(adsk.core.Point3D.create(0, 0, 0), adsk.core.Point3D.create(10, 10, 0))
+    prof = sketch.profiles.item(0)
+    extrudes = root.features.extrudeFeatures
+    extInput = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    extInput.setDistanceExtent(False, adsk.core.ValueInput.createByReal(5.0))
+    extrudes.add(extInput)
+    print("Success: 10cm Extruded Box created in Fusion 360!")
+`,
+    createCylinder: `import adsk.core, adsk.fusion
+def run(_context: str):
+    app = adsk.core.Application.get()
+    design = adsk.fusion.Design.cast(app.activeProduct)
+    root = design.rootComponent
+    sketch = root.sketches.add(root.xYConstructionPlane)
+    sketch.sketchCurves.sketchCircles.addByCenterRadius(adsk.core.Point3D.create(0, 0, 0), 3.0)
+    prof = sketch.profiles.item(0)
+    extrudes = root.features.extrudeFeatures
+    extInput = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    extInput.setDistanceExtent(False, adsk.core.ValueInput.createByReal(8.0))
+    extrudes.add(extInput)
+    print("Success: Cylinder created in Fusion 360!")
+`
+  };
+  function extractMcpText(res) {
+    if (!res || !res.result) return "";
+    let rawText = Array.isArray(res.result.content) ? res.result.content.map(item => item.text || "").join("\n") : typeof res.result === "string" ? res.result : res.result.output ? String(res.result.output) : "";
+    try { const parsed = JSON.parse(rawText); if (parsed && typeof parsed.message === "string") return parsed.message; } catch (_) {}
+    return rawText;
+  }
+  function logToConsole(type, title, data = null) {
+    const body = document.getElementById("consoleBody"), entry = document.createElement("div");
+    entry.className = `log-entry ${type}`;
+    const titleDiv = document.createElement("div"); titleDiv.className = "log-title";
+    titleDiv.textContent = `[${new Date().toLocaleTimeString()}] [${type.toUpperCase()}] ${title}`; entry.appendChild(titleDiv);
+    if (data !== null) { if (typeof data === "object") entry.appendChild(createJsonTreeNode(null, data, true)); else { const div = document.createElement("div"); div.textContent = String(data); entry.appendChild(div); } }
+    body.appendChild(entry); body.scrollTop = body.scrollHeight;
+  }
+  function clearConsole() { document.getElementById("consoleBody").innerHTML = `<div class="log-entry info"><div class="log-title">[${new Date().toLocaleTimeString()}] Console Cleared</div><div>Console logs reset.</div></div>`; }
+  function escapeHtml(str) { return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+  function createJsonTreeNode(key, value, isLast) {
+    const row = document.createElement("div"); row.className = "tree-row";
+    const keyHtml = key !== null ? `<span class="tree-key">"${escapeHtml(key)}"</span>: ` : "", comma = isLast ? "" : ",";
+    if (value === null) { row.innerHTML = `${keyHtml}<span class="tree-null">null</span>${comma}`; return row; }
+    const type = typeof value;
+    if (type === "string") { row.innerHTML = `${keyHtml}<span class="tree-string">"${escapeHtml(value)}"</span>${comma}`; return row; }
+    if (type === "number") { row.innerHTML = `${keyHtml}<span class="tree-number">${value}</span>${comma}`; return row; }
+    if (type === "boolean") { row.innerHTML = `${keyHtml}<span class="tree-bool">${value}</span>${comma}`; return row; }
+    if (type === "object") {
+      const isArray = Array.isArray(value), keys = Object.keys(value), open = isArray ? "[" : "{", close = isArray ? "]" : "}";
+      if (!keys.length) { row.innerHTML = `${keyHtml}${open}${close}${comma}`; return row; }
+      const header = document.createElement("div"); header.className = "tree-header";
+      header.innerHTML = `<span class="tree-arrow">▼</span>${keyHtml}${open}<span class="tree-count">${keys.length} ${isArray ? "items" : "props"}</span>`;
+      const children = document.createElement("div"); children.className = "tree-children";
+      keys.forEach((k, idx) => children.appendChild(createJsonTreeNode(isArray ? null : k, value[k], idx === keys.length - 1)));
+      const footer = document.createElement("div"); footer.innerHTML = `${close}${comma}`;
+      header.addEventListener("click", () => { const collapsed = children.classList.toggle("collapsed"); header.querySelector(".tree-arrow").textContent = collapsed ? "▶" : "▼"; footer.style.display = collapsed ? "none" : "block"; });
+      row.appendChild(header); row.appendChild(children); row.appendChild(footer); return row;
+    }
+    return row;
+  }
+  function expandAllTrees() { document.querySelectorAll(".tree-children").forEach(el => el.classList.remove("collapsed")); document.querySelectorAll(".tree-arrow").forEach(el => el.textContent = "▼"); }
+  function collapseAllTrees() { document.querySelectorAll(".tree-children").forEach(el => el.classList.add("collapsed")); document.querySelectorAll(".tree-arrow").forEach(el => el.textContent = "▶"); }
+  function showConfirm(title, message, success = true) { const toast = document.getElementById("confirmToast"), t = document.getElementById("toastTitle"); t.textContent = success ? `✅ ${title}` : `❌ ${title}`; t.style.color = success ? "#3fb950" : "#f85149"; document.getElementById("toastMsg").textContent = message; toast.style.display = "block"; }
+  function acknowledgeConfirm() { document.getElementById("confirmToast").style.display = "none"; }
+  function scanAndDisplayImages(obj) {
+    const card = document.getElementById("imageResultCard"), img = document.getElementById("resultImage"), meta = document.getElementById("imageMeta"); let found = null;
+    if (obj?.result?.content && Array.isArray(obj.result.content)) for (const item of obj.result.content) if (item.type === "image" && item.data) { found = `data:${item.mimeType || "image/png"};base64,${item.data}`; break; }
+    if (!found) { const match = JSON.stringify(obj).match(/data:image\/[a-zA-Z]+;base64,[A-Za-z0-9+/=]+/); if (match) found = match[0]; }
+    if (found) { img.src = found; img.onload = () => { meta.textContent = `${img.naturalWidth} × ${img.naturalHeight} px`; }; card.style.display = "block"; logToConsole("success", "Screenshot image rendered in Picture Result view."); }
+  }
+  function downloadImage() { const img = document.getElementById("resultImage"); if (!img.src) return; const a = document.createElement("a"); a.href = img.src; a.download = `fusion_snap_${Date.now()}.png`; a.click(); }
+  function clearImage() { document.getElementById("imageResultCard").style.display = "none"; document.getElementById("resultImage").src = ""; }
+  async function postJsonRpc(url, payload) {
+    const headers = { "Content-Type": "application/json", "Accept": "application/json, text/event-stream" }; if (mcpSessionId) headers["MCP-Session-Id"] = mcpSessionId;
+    const res = await fetch(url, { method: "POST", headers, body: JSON.stringify(payload) });
+    const newId = res.headers.get("mcp-session-id") || res.headers.get("MCP-Session-Id"); if (newId) mcpSessionId = newId;
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text() || res.statusText}`);
+    const text = await res.text(); return text ? JSON.parse(text) : {};
+  }
+  async function connectMcp() {
+    const endpoint = document.getElementById("endpoint").value.trim(), badge = document.getElementById("statusBadge");
+    try {
+      logToConsole("info", `Connecting to ${endpoint}...`);
+      const init = await postJsonRpc(endpoint, { jsonrpc: "2.0", id: requestId++, method: "initialize", params: { protocolVersion: "2024-11-05", capabilities: {}, clientInfo: { name: "FusionStudio", version: "1.0.0" } } });
+      logToConsole("success", "Session Handshake Initialized", init);
+      try { await postJsonRpc(endpoint, { jsonrpc: "2.0", method: "notifications/initialized" }); } catch (_) {}
+      const toolsRes = await postJsonRpc(endpoint, { jsonrpc: "2.0", id: requestId++, method: "tools/list", params: {} });
+      toolsList = toolsRes.result?.tools || []; logToConsole("success", `Discovered ${toolsList.length} Tool(s)`, toolsList.map(t => ({ name: t.name, description: t.description })));
+      badge.textContent = "Connected"; badge.className = "badge badge-ok";
+      document.getElementById("btnRunPython").disabled = false; document.getElementById("btnScreenshot").disabled = false; document.getElementById("btnScanCustom").disabled = false;
+      showConfirm("Connected", "Successfully connected to Fusion 360 MCP server!");
+    } catch (err) { badge.textContent = "Error"; badge.className = "badge badge-err"; logToConsole("error", "Connection Failed: " + err.message); showConfirm("Connection Error", err.message, false); }
+  }
+  async function onScriptSelectionChanged() {
+    const val = document.getElementById("scriptSelect").value;
+    if (builtInScripts[val]) { currentCustomScriptPath = null; document.getElementById("btnRunNative").disabled = true; document.getElementById("pythonCode").value = builtInScripts[val]; return; }
+    if (val.startsWith("custom:")) { const path = val.slice(7); currentCustomScriptPath = path; document.getElementById("btnRunNative").disabled = false; await loadCustomScriptFromFusion(path); }
+  }
+  async function scanFusionCustomScripts() {
+    const endpoint = document.getElementById("endpoint").value.trim(), btn = document.getElementById("btnScanCustom"); btn.disabled = true; logToConsole("info", "Scanning host for Fusion 360 scripts...");
+    const code = `import os, platform, json
+def run(_context: str):
+    search_dirs = []
+    if platform.system() == "Windows":
+        appdata = os.environ.get("APPDATA", "")
+        if appdata:
+            search_dirs += [os.path.join(appdata, "Autodesk", "Autodesk Fusion 360", "API", "Scripts"), os.path.join(appdata, "Autodesk", "Autodesk Fusion", "API", "Scripts"), os.path.join(appdata, "Autodesk", "Autodesk Fusion 360", "API", "AddIns")]
+    else:
+        home = os.path.expanduser("~")
+        search_dirs += [os.path.join(home, "Library", "Application Support", "Autodesk", "Autodesk Fusion 360", "API", "Scripts"), os.path.join(home, "Library", "Application Support", "Autodesk", "Autodesk Fusion", "API", "Scripts")]
+    found = []
+    for base in search_dirs:
+        if os.path.exists(base):
+            for root, _, files in os.walk(base):
+                for filename in files:
+                    if filename.endswith(".py"):
+                        full = os.path.join(root, filename)
+                        found.append({"name": os.path.relpath(full, base).replace(os.sep, "/"), "filename": filename, "path": full.replace(os.sep, "/")})
+    print("FUSION_SCRIPTS_LIST:" + json.dumps(found))
+`;
+    try {
+      const res = await postJsonRpc(endpoint, { jsonrpc: "2.0", id: requestId++, method: "tools/call", params: { name: "fusion_mcp_execute", arguments: { featureType: "script", object: { script: code } } } });
+      const output = extractMcpText(res), marker = "FUSION_SCRIPTS_LIST:", idx = output.indexOf(marker);
+      if (idx === -1) { logToConsole("info", "Scan finished, but no marker found:", res); showConfirm("Scan Finished", "No scripts marker found.", false); return; }
+      let json = output.slice(idx + marker.length).trim(); if (json.startsWith("[") && json.includes("]")) json = json.slice(0, json.lastIndexOf("]") + 1);
+      const scripts = JSON.parse(json); logToConsole("success", `Found ${scripts.length} custom script(s) in Fusion!`, scripts);
+      const group = document.getElementById("customScriptsGroup"); group.innerHTML = ""; discoveredCustomScripts = {};
+      if (!scripts.length) { group.label = "📁 Custom Fusion 360 Scripts (0 Found)"; showConfirm("No Scripts", "0 scripts found in Fusion's API/Scripts folder.", false); return; }
+      group.label = `📁 Custom Fusion 360 Scripts (${scripts.length} Found)`;
+      scripts.forEach(s => { discoveredCustomScripts[s.path] = s; const opt = document.createElement("option"); opt.value = `custom:${s.path}`; opt.textContent = `📄 ${s.name}`; group.appendChild(opt); });
+      showConfirm("Scan Complete", `Retrieved ${scripts.length} custom script(s) from Fusion!`);
+    } catch (err) { logToConsole("error", "Scan Failed: " + err.message); showConfirm("Scan Failed", err.message, false); } finally { btn.disabled = false; }
+  }
+  async function loadCustomScriptFromFusion(filePath) {
+    const endpoint = document.getElementById("endpoint").value.trim(); logToConsole("info", `Fetching script content from: ${filePath}...`);
+    const clean = filePath.replace(/\\/g, "/"), code = `import json
+def run(_context: str):
+    path = r"${clean}"
+    try:
+        with open(path, "r", encoding="utf-8", errors="replace") as f: content = f.read()
+        print("FUSION_SCRIPT_CONTENT:" + json.dumps({"content": content, "path": path}))
+    except Exception as e: print("FUSION_SCRIPT_CONTENT:" + json.dumps({"error": str(e)}))
+`;
+    try {
+      const res = await postJsonRpc(endpoint, { jsonrpc: "2.0", id: requestId++, method: "tools/call", params: { name: "fusion_mcp_execute", arguments: { featureType: "script", object: { script: code } } } });
+      const output = extractMcpText(res), marker = "FUSION_SCRIPT_CONTENT:", idx = output.indexOf(marker);
+      if (idx !== -1) { let json = output.slice(idx + marker.length).trim(); if (json.startsWith("{") && json.includes("}")) json = json.slice(0, json.lastIndexOf("}") + 1); const parsed = JSON.parse(json); if (parsed.content !== undefined) { document.getElementById("pythonCode").value = parsed.content; logToConsole("success", `Loaded custom script: ${filePath}`); showConfirm("Script Loaded", `Loaded "${filePath.split('/').pop()}" into editor!`); return; } }
+      logToConsole("error", "Failed to parse script content from Fusion response.", res);
+    } catch (err) { logToConsole("error", "Failed to load script: " + err.message); }
+  }
+  async function runSelectedScriptNatively() {
+    if (!currentCustomScriptPath) { alert("Please select a custom script from the dropdown first."); return; }
+    const endpoint = document.getElementById("endpoint").value.trim(), path = currentCustomScriptPath.replace(/\\/g, "/"), btn = document.getElementById("btnRunNative");
+    btn.disabled = true; logToConsole("info", `Executing script natively from disk: ${path}...`);
+    const code = `import importlib.util, traceback
+def run(_context: str):
+    path = r"${path}"
+    try:
+        spec = importlib.util.spec_from_file_location("native_custom_script", path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        if hasattr(mod, "run"):
+            mod.run(_context)
+            print(f"Successfully executed '{path}' via run() entrypoint.")
+        else: print(f"Loaded and executed module '{path}'.")
+    except Exception: print(f"Error executing custom script:\\n{traceback.format_exc()}")
+`;
+    try {
+      const res = await postJsonRpc(endpoint, { jsonrpc: "2.0", id: requestId++, method: "tools/call", params: { name: "fusion_mcp_execute", arguments: { featureType: "script", object: { script: code } } } });
+      logToConsole("success", "Native Host Execution Result:", res); scanAndDisplayImages(res); showConfirm("Executed Natively", `Executed ${path.split('/').pop()} directly from disk!`);
+    } catch (err) { logToConsole("error", "Native Execution Failed: " + err.message); showConfirm("Execution Failed", err.message, false); } finally { btn.disabled = false; }
+  }
+  function handleLocalFileSelect(evt) {
+    const file = evt.target.files[0]; if (!file) return; const reader = new FileReader();
+    reader.onload = e => { document.getElementById("pythonCode").value = e.target.result; logToConsole("info", `Opened local file: ${file.name}`); showConfirm("File Opened", `Loaded local file "${file.name}" into editor!`); };
+    reader.readAsText(file);
+  }
+  async function executeScript() {
+    const endpoint = document.getElementById("endpoint").value.trim(), script = document.getElementById("pythonCode").value, btn = document.getElementById("btnRunPython");
+    btn.disabled = true; const start = Date.now(); const payload = { jsonrpc: "2.0", id: requestId++, method: "tools/call", params: { name: "fusion_mcp_execute", arguments: { featureType: "script", object: { script } } } };
+    logToConsole("info", "Executing Python Script in Fusion 360...", payload);
+    try { const res = await postJsonRpc(endpoint, payload), elapsed = Date.now() - start; logToConsole("success", `Script Completed in ${elapsed}ms`, res); scanAndDisplayImages(res); const error = res.result?.isError || !!res.error; showConfirm(error ? "Execution Error" : "Execution Finished", error ? "Fusion returned an error." : `Script finished in ${elapsed}ms!`, !error); }
+    catch (err) { logToConsole("error", "Execution Failed: " + err.message); showConfirm("Execution Failed", err.message, false); } finally { btn.disabled = false; }
+  }
+  async function captureScreenshot() {
+    const endpoint = document.getElementById("endpoint").value.trim(), btn = document.getElementById("btnScreenshot"); btn.disabled = true; const start = Date.now();
+    let tool = "fusion_mcp_read", args = { queryType: "screenshot", width: 900, height: 600, antiAliasing: true, transparentBackground: false, direction: "current" };
+    if (toolsList.some(t => t.name === "capture_part_studio_screenshot")) { tool = "capture_part_studio_screenshot"; args = { width: 900, height: 600 }; }
+    const payload = { jsonrpc: "2.0", id: requestId++, method: "tools/call", params: { name: tool, arguments: args } }; logToConsole("info", `Capturing Screenshot using '${tool}'...`, payload);
+    try { const res = await postJsonRpc(endpoint, payload), elapsed = Date.now() - start; logToConsole("success", `Screenshot Received in ${elapsed}ms`, res); scanAndDisplayImages(res); showConfirm("Screenshot Captured", `Received screenshot in ${elapsed}ms!`); }
+    catch (err) { logToConsole("error", "Screenshot Failed: " + err.message); showConfirm("Screenshot Failed", err.message, false); } finally { btn.disabled = false; }
+  }
+  window.onload = () => { document.getElementById("pythonCode").value = builtInScripts.userMessageBox; };
+</script>
+</body>
+</html>
