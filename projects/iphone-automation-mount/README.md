@@ -14,7 +14,7 @@ A configurable Autodesk Fusion 360 Python script for generating a phone fixture 
 ## Files
 
 - [`iphone_automation_mount.py`](./iphone_automation_mount.py) — Fusion 360 generator.
-- [`iphone_automation_mount.stl.stl`](./iphone_automation_mount.stl.stl) — committed mesh example.
+- [`iphone_automation_mount.stl`](./iphone_automation_mount.stl) — committed mesh example.
 
 ## Run it
 
