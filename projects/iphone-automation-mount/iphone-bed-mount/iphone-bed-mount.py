@@ -99,12 +99,12 @@ def run(context):
         arm_x1 = pocket_x2                           # +58.5 mm
         arm_x2 = arm_x1 + arm_w                      # +82.5 mm
 
-        # [STRENGTH OPTIMIZATION] Tangent circular arc fillet at Root Junction (Mount to Arm)
-        MOUNT_ARM_FILLET_R = 10.0 * mm               # Smooth fillet replacing sharp chamfer
+        # Root Junction Fillet (Mount to Arm)
+        MOUNT_ARM_FILLET_R = 10.0 * mm
 
-        # [WEIGHT & INERTIA OPTIMIZATION] Arm Lightening Slot Parameters
+        # Arm Lightening Slot Parameters
         ARM_SLOT_ENABLE = True
-        ARM_SLOT_W = 10.0 * mm                       # 10 mm wide central slot (leaves dual 7mm rails)
+        ARM_SLOT_W = 10.0 * mm                       # 10 mm wide central slot
         ARM_SLOT_Y1 = 4.0 * mm                       # Starts above pocket rear wall
         ARM_SLOT_Y2 = 46.0 * mm                      # Ends below mount bar
 
@@ -121,28 +121,30 @@ def run(context):
         hole1_x = -pin_spacing / 2.0                 # -50.0 mm
         hole2_x = pin_spacing / 2.0                  # +50.0 mm
 
-        # Left Rounded Nose (180° semi-circular arc around Hole 1)
+        # Left Rounded Nose
         MOUNT_LEFT_EXT = 6.0 * mm
         mount_left_cx = hole1_x - MOUNT_LEFT_EXT     # -56.0 mm
         MOUNT_ARC_LEFT_R = mount_bar_d / 2.0         # 9.0 mm radius
         mount_left_apex_x = mount_left_cx - MOUNT_ARC_LEFT_R # -65.0 mm
 
-        # Top-Right Fillet Arc (90° circular fillet into vertical arm edge)
+        # Top-Right Fillet Arc
         MOUNT_ARC_RIGHT_R = 12.0 * mm
 
         # Inner pocket cavity boundaries
-        inner_x1 = pocket_x1 + WALL_THICK            # -84.0 mm
-        inner_x2 = pocket_x2 - WALL_THICK            # +55.0 mm
-        inner_y1 = pocket_y1 + WALL_THICK            # -84.0 mm
-        inner_y2 = pocket_y2 - WALL_THICK            # -16.0 mm
+        inner_x1 = pocket_x1 + WALL_THICK            # -84.0 mm (Phone Bottom / Lightning Port)
+        inner_x2 = pocket_x2 - WALL_THICK            # +55.0 mm (Phone Top)
+        inner_y1 = pocket_y1 + WALL_THICK            # -84.0 mm (Phone Right Side / Front Wall)
+        inner_y2 = pocket_y2 - WALL_THICK            # -16.0 mm (Phone Left Side / Rear Wall)
 
-        # Camera Cutout (Front-Right of pocket cavity)
-        CAM_SIZE_X = 42.0 * mm
-        CAM_SIZE_Y = 42.0 * mm
+        # -------------------------------------------------------------
+        # CAMERA CUTOUT (COMPACT SIZE FOR iPHONE SE 2 SINGLE LENS + FLASH)
+        # -------------------------------------------------------------
+        CAM_SIZE_X = 26.0 * mm                       # Reduced from 42 mm for rigidity
+        CAM_SIZE_Y = 26.0 * mm                       # Reduced from 42 mm for rigidity
         cam_x2 = inner_x2                            # +55.0 mm
-        cam_x1 = inner_x2 - CAM_SIZE_X               # +13.0 mm
+        cam_x1 = inner_x2 - CAM_SIZE_X               # +29.0 mm
         cam_y1 = inner_y1                            # -84.0 mm
-        cam_y2 = inner_y1 + CAM_SIZE_Y               # -42.0 mm
+        cam_y2 = inner_y1 + CAM_SIZE_Y               # -58.0 mm
 
         # 3x3 Plate Grid & Stress-Relief Corner Radii
         GRID_CUT_ENABLE = True
@@ -150,16 +152,24 @@ def run(context):
         GRID_RIB_W = 5.0 * mm                        # Width of internal structural ribs
         GRID_CORNER_R = 3.5 * mm                     # Stress-relief radius on grid corners
 
-        # Wall Cutouts (Buttons & Charging Port)
-        WALL_LIP_HEIGHT = 0.0 * mm
+        # -------------------------------------------------------------
+        # WALL CUTOUT PARAMETERS (FOR iPHONE SE 2 SIDE BUTTON & CONTROLS)
+        # -------------------------------------------------------------
+        WALL_LIP_HEIGHT = 0.0 * mm                   # 0 = cuts down to pocket floor
         PORT_CUT_ENABLE = True
-        PORT_CUT_W = 15.0 * mm
-        FRONT_BUTTON_CUT_ENABLE = True
-        FRONT_BUTTON_CUT_W = 38.0 * mm
-        FRONT_BUTTON_CUT_X = 20.0 * mm
-        REAR_BUTTON_CUT_ENABLE = True
-        REAR_BUTTON_CUT_W = 20.0 * mm
-        REAR_BUTTON_CUT_X = 18.5 * mm
+        PORT_CUT_W = 16.0 * mm                       # Lightning port cut (Left Wall)
+
+        # Side Button / Sleep / Wake (Front Wall, Right side of SE 2)
+        SIDE_BUTTON_CUT_ENABLE = True
+        SIDE_BUTTON_DIST_FROM_TOP = 34.64 * mm
+        SIDE_BUTTON_CUT_W = 22.0 * mm
+        SIDE_BUTTON_CUT_X = inner_x2 - SIDE_BUTTON_DIST_FROM_TOP  # Center at X ≈ +20.36 mm
+
+        # Volume & Mute Switch Controls (Rear Wall, Left side of SE 2)
+        VOLUME_CUT_ENABLE = True
+        VOLUME_CUT_DIST_FROM_TOP = 35.0 * mm
+        VOLUME_CUT_W = 42.0 * mm
+        VOLUME_CUT_X = inner_x2 - VOLUME_CUT_DIST_FROM_TOP        # Center at X ≈ +20.0 mm
 
         # Printer Homing Clearance (Right-Bottom Corner)
         HOME_CUT_ENABLE = True
@@ -167,7 +177,7 @@ def run(context):
         HOME_CUT_D = 25.0 * mm
 
         # -------------------------------------------------------------
-        # STEP 1: Monolithic Base (Mount Arcs, Root Fillet & 90° Arm Corner)
+        # STEP 1: Monolithic Base
         # -------------------------------------------------------------
         baseSketch = sketches.add(xyPlane)
         bLines = baseSketch.sketchCurves.sketchLines
@@ -219,7 +229,7 @@ def run(context):
         p_fillet_start = adsk.core.Point3D.create(arm_x1 - MOUNT_ARM_FILLET_R, mount_y1, 0)
         bLines.addByTwoPoints(p_bl_end, p_fillet_start)
 
-        # 8. [STRENGTH OPTIMIZATION] Tangent Circular Arc Fillet at Mount/Arm Root
+        # 8. Tangent Circular Arc Fillet at Mount/Arm Root
         p_arm_inner_top = adsk.core.Point3D.create(arm_x1, mount_y1 - MOUNT_ARM_FILLET_R, 0)
         p_fillet_mid = adsk.core.Point3D.create(
             arm_x1 - MOUNT_ARM_FILLET_R * (1.0 - math.sqrt(2) / 2.0),
@@ -228,11 +238,11 @@ def run(context):
         )
         bArcs.addByThreePoints(p_fillet_start, p_fillet_mid, p_arm_inner_top)
 
-        # 9. Arm Inner Edge straight down to pocket (EXACT 90° CORNER KEPT)
+        # 9. Arm Inner Edge straight down to pocket
         p_corner_90 = adsk.core.Point3D.create(arm_x1, pocket_y2, 0)
         bLines.addByTwoPoints(p_arm_inner_top, p_corner_90)
 
-        # 10. Pocket Rear Edge (From 90° corner horizontally left)
+        # 10. Pocket Rear Edge
         p_pocket_rl = adsk.core.Point3D.create(pocket_x1, pocket_y2, 0)
         bLines.addByTwoPoints(p_corner_90, p_pocket_rl)
 
@@ -251,7 +261,7 @@ def run(context):
         mainBody.name = "Prusa_Mini_iPhone_SideArm_Mount"
 
         # -------------------------------------------------------------
-        # STEP 1b: [MATERIAL & INERTIA OPTIMIZATION] Arm Lightening Slot
+        # STEP 1b: Arm Lightening Slot
         # -------------------------------------------------------------
         if ARM_SLOT_ENABLE:
             armSlotSketch = sketches.add(xyPlane)
@@ -263,22 +273,18 @@ def run(context):
             slot_x_left = slot_cx - slot_r
             slot_x_right = slot_cx + slot_r
 
-            # Bottom semi-circle
             p_b_start = adsk.core.Point3D.create(slot_x_left, ARM_SLOT_Y1 + slot_r, 0)
             p_b_end = adsk.core.Point3D.create(slot_x_right, ARM_SLOT_Y1 + slot_r, 0)
             p_b_mid = adsk.core.Point3D.create(slot_cx, ARM_SLOT_Y1, 0)
             asArcs.addByThreePoints(p_b_start, p_b_mid, p_b_end)
 
-            # Right straight line
             p_t_end = adsk.core.Point3D.create(slot_x_right, ARM_SLOT_Y2 - slot_r, 0)
             asLines.addByTwoPoints(p_b_end, p_t_end)
 
-            # Top semi-circle
             p_t_start = adsk.core.Point3D.create(slot_x_left, ARM_SLOT_Y2 - slot_r, 0)
             p_t_mid = adsk.core.Point3D.create(slot_cx, ARM_SLOT_Y2, 0)
             asArcs.addByThreePoints(p_t_end, p_t_mid, p_t_start)
 
-            # Left straight line
             asLines.addByTwoPoints(p_t_start, p_b_start)
 
             armSlotProf = armSlotSketch.profiles.item(0)
@@ -313,7 +319,7 @@ def run(context):
         extrudes.add(wallInput)
 
         # -------------------------------------------------------------
-        # STEP 3: Wall Cutouts (Buttons & Charging Port)
+        # STEP 3: Wall Cutouts (iPhone SE 2 Side Button & Controls)
         # -------------------------------------------------------------
         if WALL_LIP_HEIGHT > 0:
             lipPlaneInput = topPlanes.createInput()
@@ -326,7 +332,7 @@ def run(context):
         wcLines = wallCutSketch.sketchCurves.sketchLines
         wallCutProfs = adsk.core.ObjectCollection.create()
 
-        # 1. Charge Port Cutout on Left Wall
+        # 1. Lightning Port Cutout on Left Wall (Bottom of iPhone)
         if PORT_CUT_ENABLE and PORT_CUT_W > 0:
             port_cy = (inner_y1 + inner_y2) / 2.0
             wcLines.addTwoPointRectangle(
@@ -334,18 +340,18 @@ def run(context):
                 adsk.core.Point3D.create(inner_x1 + 1.0 * mm, port_cy + PORT_CUT_W / 2.0, 0)
             )
 
-        # 2. Volume & Mute Button Cutout on Front Wall
-        if FRONT_BUTTON_CUT_ENABLE and FRONT_BUTTON_CUT_W > 0:
+        # 2. Side Button (Sleep/Wake) Cutout on Front Wall (Right side of iPhone SE 2)
+        if SIDE_BUTTON_CUT_ENABLE and SIDE_BUTTON_CUT_W > 0:
             wcLines.addTwoPointRectangle(
-                adsk.core.Point3D.create(FRONT_BUTTON_CUT_X - FRONT_BUTTON_CUT_W / 2.0, pocket_y1 - 1.0 * mm, 0),
-                adsk.core.Point3D.create(FRONT_BUTTON_CUT_X + FRONT_BUTTON_CUT_W / 2.0, inner_y1 + 1.0 * mm, 0)
+                adsk.core.Point3D.create(SIDE_BUTTON_CUT_X - SIDE_BUTTON_CUT_W / 2.0, pocket_y1 - 1.0 * mm, 0),
+                adsk.core.Point3D.create(SIDE_BUTTON_CUT_X + SIDE_BUTTON_CUT_W / 2.0, inner_y1 + 1.0 * mm, 0)
             )
 
-        # 3. Power Button Cutout on Rear Wall
-        if REAR_BUTTON_CUT_ENABLE and REAR_BUTTON_CUT_W > 0:
+        # 3. Volume Buttons & Mute Switch Cutout on Rear Wall (Left side of iPhone SE 2)
+        if VOLUME_CUT_ENABLE and VOLUME_CUT_W > 0:
             wcLines.addTwoPointRectangle(
-                adsk.core.Point3D.create(REAR_BUTTON_CUT_X - REAR_BUTTON_CUT_W / 2.0, inner_y2 - 1.0 * mm, 0),
-                adsk.core.Point3D.create(REAR_BUTTON_CUT_X + REAR_BUTTON_CUT_W / 2.0, pocket_y2 + 1.0 * mm, 0)
+                adsk.core.Point3D.create(VOLUME_CUT_X - VOLUME_CUT_W / 2.0, inner_y2 - 1.0 * mm, 0),
+                adsk.core.Point3D.create(VOLUME_CUT_X + VOLUME_CUT_W / 2.0, pocket_y2 + 1.0 * mm, 0)
             )
 
         for prof in wallCutSketch.profiles:
@@ -376,7 +382,7 @@ def run(context):
             extrudes.add(homeCutInput)
 
         # -------------------------------------------------------------
-        # STEP 5: iPhone Plate 3x3 Grid with Filleted Stress Relief
+        # STEP 5: iPhone Plate 3x3 Grid (space-solid-space pattern)
         # -------------------------------------------------------------
         if GRID_CUT_ENABLE:
             gridSketch = sketches.add(xyPlane)
@@ -384,7 +390,6 @@ def run(context):
             gArcs = gridSketch.sketchCurves.sketchArcs
             gridProfs = adsk.core.ObjectCollection.create()
 
-            # Bounds inside inner wall limits with fixed shelf margin
             grid_x_min = inner_x1 + PLATE_MARGIN
             grid_x_max = inner_x2 - PLATE_MARGIN
             grid_y_min = inner_y1 + PLATE_MARGIN
@@ -396,14 +401,16 @@ def run(context):
             cell_w = (avail_w - 2.0 * GRID_RIB_W) / 3.0
             cell_d = (avail_d - 2.0 * GRID_RIB_W) / 3.0
 
-            # Dynamic camera keep-out zone
             cam_box_x1 = cam_x1 - GRID_RIB_W
             cam_box_y2 = cam_y2 + GRID_RIB_W
 
-            # 3x3 layout: (r + c) % 2 == 1 is candidate EMPTY cutout
+            # (r + c) % 2 == 0 gives:
+            # Row 2 (Rear):  space | solid | space
+            # Row 1 (Mid):   solid | space | solid
+            # Row 0 (Front): space | solid | [Camera cutout]
             for r in range(3):
                 for c in range(3):
-                    if (r + c) % 2 == 1:
+                    if (r + c) % 2 == 0:
                         cx1 = grid_x_min + c * (cell_w + GRID_RIB_W)
                         cx2 = cx1 + cell_w
                         cy1 = grid_y_min + r * (cell_d + GRID_RIB_W)
@@ -426,7 +433,7 @@ def run(context):
                 extrudes.add(gridCutInput)
 
         # -------------------------------------------------------------
-        # STEP 6: Camera Cutout (Through Base Floor)
+        # STEP 6: Camera Cutout (Compact 26x26mm Through Base Floor)
         # -------------------------------------------------------------
         camSketch = sketches.add(xyPlane)
         camLines = camSketch.sketchCurves.sketchLines
@@ -448,19 +455,17 @@ def run(context):
         if ui:
             ui.messageBox(
                 "Prusa Mini Mount Generated Successfully!\n\n"
-                "• Structural & Lightweighting Optimizations:\n"
-                "  1. Arm Lightening Slot:\n"
-                "     - Removes ~1,800 mm³ of dead weight from neutral axis.\n"
-                "     - Dual 7 mm side rails form a parallel truss with higher stiffness-to-weight ratio.\n"
-                "  2. Root Tangent Fillet (R = {} mm):\n"
-                "     - Eliminates stress peak where arm connects to mount bar.\n"
-                "  3. Stress-Relief Radiused Cutouts (R = {} mm):\n"
-                "     - Round filleted corners eliminate notch risers in the 3x3 plate grid.\n"
-                "  4. Pocket/Arm Junction:\n"
-                "     - Kept strictly as an orthogonal 90° corner.\n"
-                "  5. Camera Awareness:\n"
-                "     - Full zero-overlap clearance maintained."
-                .format(MOUNT_ARM_FILLET_R / mm, GRID_CORNER_R / mm)
+                "• Updates Applied:\n"
+                "  1. Downsized Camera Cutout:\n"
+                "     - Reduced from 42x42 mm to {:.1f} x {:.1f} mm.\n"
+                "     - Restores solid floor thickness and avoids invading adjacent grid cells.\n"
+                "  2. Inverted Checkerboard Plate Grid:\n"
+                "     - Row 2 (Rear):  [SPACE]  [SOLID]  [SPACE]\n"
+                "     - Row 1 (Mid):   [SOLID]  [SPACE]  [SOLID]\n"
+                "     - Row 0 (Front): [SPACE]  [SOLID]  [CAMERA CUT]\n"
+                "  3. iPhone SE 2 Side Button Clearances:\n"
+                "     - Maintained 22.0 mm cutout on Front Wall (centered at X = {:.1f} mm)."
+                .format(CAM_SIZE_X / mm, CAM_SIZE_Y / mm, SIDE_BUTTON_CUT_X / mm)
             )
 
     except Exception:
