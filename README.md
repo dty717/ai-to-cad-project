@@ -5,11 +5,11 @@
 [![Language: Python 3](https://img.shields.io/badge/Language-Python%203-blue.svg)](https://www.python.org/)
 [![MCP tooling](https://img.shields.io/badge/Integration-MCP-purple.svg)](./tools/)
 
-> A prompt-driven workflow for translating mechanical requirements into editable Autodesk Fusion models using the native Python API. This repository brings together design prompts, Fusion scripts, examples, and tooling for generating editable parametric CAD content.
+> A prompt-driven workflow for translating mechanical requirements into editable Autodesk Fusion models using the native Python API. This repository brings together design prompts, Fusion scripts, example artifacts, and tooling for working with Fusion through MCP.
 
 ## Why AI-to-CAD?
 
-Many generative 3D workflows produce triangulated meshes such as `.stl` or `.obj`. Meshes can be useful for visualization and printing, but they are generally less convenient to dimension, constrain, revise, or adapt when design requirements change.
+Many generative 3D workflows produce triangulated meshes such as `.stl` or `.obj`. Meshes can be useful for visualization and printing, but they are generally less convenient to dimension, constrain, and revise than native CAD models.
 
 This project focuses on generating **parametric B-Rep models** in Fusion:
 
@@ -23,14 +23,14 @@ This project focuses on generating **parametric B-Rep models** in Fusion:
 ```mermaid
 flowchart LR
     A[Mechanical requirements] --> B[Project prompt]
-    B --> C[LLM + Fusion system prompt]
+    B --> C[LLM]
     C --> D[Fusion Python script]
     D -->|Run in Fusion| E[Editable parametric model]
     E --> F[Inspect or export as needed]
 ```
 
 1. **Specify** the requirements, interfaces, dimensions, and constraints in a project prompt.
-2. **Generate or adapt** a script using the [Fusion 360 system prompt](./prompts/fusion360_system_prompt.md) as guidance.
+2. **Generate or adapt** a script using the [Fusion 360 export prompt](./prompts/export_one_shot_prompt.md) as guidance.
 3. **Run** the script in Fusion 360's Scripts and Add-Ins environment, or use the MCP tooling described in [`tools/README.md`](./tools/README.md).
 4. **Review and iterate** on the resulting design in Fusion.
 
@@ -38,9 +38,9 @@ flowchart LR
 
 | Project | Prompt | Fusion script | Included artifact / notes |
 | --- | --- | --- | --- |
-| **iPhone bed mount** | [Prompt](./projects/iphone-automation-mount/iphone-bed-mount/iphone-bed-mount_PROMPT.md) | [Script](./projects/iphone-automation-mount/iphone-bed-mount/iphone-bed-mount.py) | STL included |
-| **Prusa Mini stylus holder — standard** | [Prompt](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_standard_PROMPT.md) | [Script](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_standard.py) | STL included |
-| **Prusa Mini stylus holder — 65 mm offset** | [Prompt](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_offset_65mm_PROMPT.md) | [Script](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_offset_65mm.py) | STL included |
+| **iPhone bed mount** | [Prompt](./projects/iphone-automation-mount/iphone-bed-mount/iphone-bed-mount_PROMPT.md) | [Script](./projects/iphone-automation-mount/iphone-bed-mount/iphone-bed-mount.py) | Example STL artifact |
+| **Prusa Mini stylus holder — standard** | [Prompt](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_standard_PROMPT.md) | [Script](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_standard.py) | Standard variant |
+| **Prusa Mini stylus holder — 65 mm offset** | [Prompt](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_offset_65mm_PROMPT.md) | [Script](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_offset_65mm.py) | 65 mm offset variant |
 | **iPhone automation mount** | [Project overview](./projects/iphone-automation-mount/README.md) | — | Project documentation |
 
 See [`projects/`](./projects/) for project organization and notes.
@@ -67,11 +67,11 @@ These scripts use Fusion's `adsk` API and must run inside Fusion's scripting env
 - Avoid relying on arbitrary profile indices when selecting sketch regions. Where practical, identify the intended profile from its geometry or location.
 - Make script errors visible during development by handling exceptions and reporting useful traceback information in Fusion's UI or log.
 
-For broader prompt and API guidance, see [`prompts/fusion360_system_prompt.md`](./prompts/fusion360_system_prompt.md).
+For broader prompt and API guidance, see [`prompts/export_one_shot_prompt.md`](./prompts/export_one_shot_prompt.md).
 
 ## Fusion MCP Studio
 
-The [`tools/fusion-mcp-studio`](./tools/fusion-mcp-studio/) directory contains a browser UI for working with Fusion's MCP server. The repository's [tools guide](./tools/README.md) documents the requirements and workflow.
+The [`tools/fusion-mcp-studio`](./tools/fusion-mcp-studio/) directory contains a browser UI for working with Fusion's MCP server. The repository's [tools guide](./tools/README.md) documents the requirements and usage.
 
 ## Repository layout
 
@@ -92,7 +92,7 @@ ai-to-cad-project/
 │   │       └── stylus_holder_offset_65mm.py
 │   └── ...
 ├── prompts/
-│   └── fusion360_system_prompt.md
+│   └── export_one_shot_prompt.md
 ├── tools/
 │   ├── README.md
 │   └── fusion-mcp-studio/
@@ -102,7 +102,7 @@ ai-to-cad-project/
 
 ## Contributing
 
-Contributions of new mechanical designs, prompt templates, and tooling improvements are welcome. For a new CAD project, use a dedicated folder under `projects/` and include the design prompt and runnable script.
+Contributions of new mechanical designs, prompt templates, and tooling improvements are welcome. For a new CAD project, use a dedicated folder under `projects/` and include the design prompt and runnable Fusion script.
 
 ## License
 
