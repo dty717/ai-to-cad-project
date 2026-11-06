@@ -5,18 +5,18 @@
 [![Language: Python 3](https://img.shields.io/badge/Language-Python%203-blue.svg)](https://www.python.org/)
 [![MCP tooling](https://img.shields.io/badge/Integration-MCP-purple.svg)](./tools/)
 
-> A prompt-driven workflow for translating mechanical requirements into editable Autodesk Fusion models using the native Python API. This repository brings together design prompts, Fusion scripts, example project files, and Fusion MCP Studio tooling.
+> A prompt-driven workflow for translating mechanical requirements into editable Autodesk Fusion models using the native Python API. This repository brings together design prompts, Fusion scripts, examples, and tooling for rapid parametric model generation.
 
 ## Why AI-to-CAD?
 
-Many generative 3D workflows produce triangulated meshes such as `.stl` or `.obj`. Meshes can be useful for visualization and printing, but they are generally less convenient to dimension, constrain, and edit than native CAD geometry.
+Many generative 3D workflows produce triangulated meshes such as `.stl` or `.obj`. Meshes can be useful for visualization and printing, but they are generally less convenient to dimension, constrain, or adapt parametrically.
 
 This project focuses on generating **parametric B-Rep models** in Fusion:
 
 - **Native CAD features:** Build models from Fusion sketches and modeling features rather than treating the result only as a triangle mesh.
 - **Editable designs:** Keep the design in Fusion so you can inspect and revise its geometry and feature history.
 - **Prompt-guided workflow:** Pair mechanical requirements with Fusion-specific prompt guidance and runnable Python scripts.
-- **MCP tooling:** `tools/fusion-mcp-studio` provides a browser UI for connecting to Fusion's MCP server, editing and running scripts, discovering local scripts, and viewing screenshots. See [Tools](./tools/README.md) for setup.
+- **MCP tooling:** `tools/fusion-mcp-studio` provides a browser UI for connecting to Fusion's MCP server, editing and running scripts, discovering local scripts, and viewing screenshots. See [Tools](./tools/README.md).
 
 ## Workflow
 
@@ -39,11 +39,11 @@ flowchart LR
 | Project | Prompt | Fusion script | Included artifact / notes |
 | --- | --- | --- | --- |
 | **iPhone bed mount** | [Prompt](./projects/iphone-bed-mount/iphone-bed-mount_PROMPT.md) | [Script](./projects/iphone-bed-mount/iphone-bed-mount.py) | STL included |
-| **Prusa Mini stylus holder — standard** | [Prompt](./projects/prusa-mini-stylus-holder/stylus_holder_standard_PROMPT.md) | [Script](./projects/prusa-mini-stylus-holder/stylus_holder_standard.py) | Prompt and script included |
-| **Prusa Mini stylus holder — 65 mm offset** | [Prompt](./projects/prusa-mini-stylus-holder/stylus_holder_offset_65mm_PROMPT.md) | [Script](./projects/prusa-mini-stylus-holder/stylus_holder_offset_65mm.py) | Prompt and script included |
+| **Prusa Mini stylus holder — standard** | [Prompt](./projects/prusa-mini-stylus-holder/stylus_holder_standard_PROMPT.md) | [Script](./projects/prusa-mini-stylus-holder/stylus_holder_standard.py) | STL and parametric script |
+| **Prusa Mini stylus holder — 65 mm offset** | [Prompt](./projects/prusa-mini-stylus-holder/stylus_holder_offset_65mm_PROMPT.md) | [Script](./projects/prusa-mini-stylus-holder/stylus_holder_offset_65mm.py) | Offset variant |
 | **iPhone automation mount** | [Project overview](./projects/iphone-automation-mount/README.md) | — | Project documentation |
 
-See [`projects/README.md`](./projects/README.md) for project organization and notes.
+See [`projects/`](./projects/) for project organization and notes.
 
 ## Quickstart: run a Fusion script
 
@@ -63,7 +63,7 @@ These scripts use Fusion's `adsk` API and must run inside Fusion's scripting env
 
 ## Fusion API notes
 
-- Fusion's internal database unit for lengths is centimeters. For length values, `ValueInput.createByReal(10)` represents 10 cm—not 10 mm. Use `ValueInput.createByString("25 mm")` when specifying a value with units, or convert millimeters to centimeters when an API call expects an internal-unit number.
+- Fusion's internal database unit for lengths is centimeters. For length values, `ValueInput.createByReal(10)` represents 10 cm—not 10 mm. Use `ValueInput.createByString("25 mm")` when specifying a length in millimeters.
 - Avoid relying on arbitrary profile indices when selecting sketch regions. Where practical, identify the intended profile from its geometry or location.
 - Make script errors visible during development by handling exceptions and reporting useful traceback information in Fusion's UI or log.
 
@@ -71,7 +71,7 @@ For broader prompt and API guidance, see [`prompts/fusion360_system_prompt.md`](
 
 ## Fusion MCP Studio
 
-The [`tools/fusion-mcp-studio`](./tools/fusion-mcp-studio/) directory contains a browser UI for working with Fusion's MCP server. The repository's [tools guide](./tools/README.md) documents the requirements and startup steps. In brief, it requires Fusion's MCP server listening on `127.0.0.1:27182` and Node.js for the proxy.
+The [`tools/fusion-mcp-studio`](./tools/fusion-mcp-studio/) directory contains a browser UI for working with Fusion's MCP server. The repository's [tools guide](./tools/README.md) documents the requirements and workflow.
 
 ## Repository layout
 
@@ -101,7 +101,7 @@ ai-to-cad-project/
 
 ## Contributing
 
-Contributions of new mechanical designs, prompt templates, and tooling improvements are welcome. For a new CAD project, use a dedicated folder under `projects/` and include the design prompt and runnable Fusion script. Add exported artifacts or preview images when available, and document any special setup or limitations.
+Contributions of new mechanical designs, prompt templates, and tooling improvements are welcome. For a new CAD project, use a dedicated folder under `projects/` and include the design prompt and runnable script.
 
 ## License
 
