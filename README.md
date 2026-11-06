@@ -1,110 +1,77 @@
-# ⚡ AI-to-CAD: Generative Parametric 3D with Fusion 360 & MCP
+# 🛠️ Parametric CAD Toolkit
 
-> **Bridging generative AI and precision manufacturing.** Turn natural-language design requirements into editable, parametric B-Rep CAD models in Autodesk Fusion 360 using Python API scripts and, eventually, a Model Context Protocol (MCP) bridge.
+> **A code-to-CAD toolkit for parametric design and digital fabrication.** This project collects programmatic CAD generators and design-automation scripts for Autodesk Fusion 360, with a path toward AI-assisted workflows and an MCP bridge.
 
-## The idea
+## About
 
-Many AI-to-3D workflows produce polygon meshes that are difficult to dimension, edit, or prepare for engineering workflows. This project explores a **code-to-CAD** approach instead:
+Instead of manually modeling repetitive or configurable parts, the tools in this repository aim to generate editable CAD geometry from scripts and design parameters. The focus is on native Fusion 360 sketches and features, with export to formats such as STEP, STL, and 3MF where supported.
 
-1. **Describe the design.** Provide geometry, dimensions, fit requirements, and intended use in a prompt.
-2. **Generate CAD instructions.** An AI agent reasons about the requirements and produces a deterministic Fusion 360 Python API script.
-3. **Build and inspect.** Run the script in Fusion 360 to create native sketches, features, and solid B-Rep geometry.
-4. **Edit and export.** Adjust model parameters in CAD and export formats such as STEP, STL, or 3MF as appropriate.
+Generated models are design starting points, not guarantees of manufacturing readiness. Verify dimensions, material, clearances, loads, and process-specific tolerances before using a design in production.
 
-The goal is editable CAD geometry and a repeatable modeling process—not a guarantee that every generated design is safe or ready to manufacture. Validate dimensions, clearances, strength, material, and process-specific tolerances before production.
+## Tools catalog
 
-## Example directions
+| Tool | Category | Input | Description | Status |
+| --- | --- | --- | --- | --- |
+| [`iphone-automation-mount`](./tools/iphone-automation-mount/) | Jigs and fixtures | Script parameters | Planned parametric bed-mounted iPhone fixture concept with printer clearance requirements. | Planned |
+| [`text-to-screw-generator`](./tools/text-to-screw-generator/) | Fasteners | Designation and parameters | Planned configurable screw generator for metric sizes and head styles. | Planned |
+| `future-tools` | Mechanical design | To be determined | Future ideas may include enclosures, gears, and other parametric utilities. | Planned |
 
-| Module | Example prompt | Intended result | Status |
-| --- | --- | --- | --- |
-| `iphone-automation-mount` | “Mount an iPhone SE2 to a Prusa Mini bed, clear the homing zone, reduce mass, and protect ports.” | Parametric fixture concept with a homing clearance and lightweighting features. | Planned |
-| `text-to-fastener` | “Create an M3 × 16 socket-head screw with a specified thread standard.” | Parametric fastener geometry with configurable dimensions. | Planned |
-| `enclosure-generator` | “Create a snap-fit enclosure for a 50 × 70 mm PCB with M2.5 standoffs.” | Two-part enclosure concept with a lid and board supports. | Planned |
-
-These are project directions and prompts, not claims that the modules or manufacturing validation are already implemented.
-
-## Architecture
-
-```text
-Natural-language requirements
-              │
-              ▼
-      LLM / AI agent
-  engineering reasoning and
-  Fusion 360 script generation
-              │
-              ▼
-       Script runner / MCP
-              │
-              ▼
-       Autodesk Fusion 360
-  sketches · features · checks
-              │
-              ▼
- Editable B-Rep CAD and exports
-       STEP · STL · 3MF
-```
-
-An MCP server and closed-loop Fusion 360 integration are future work. Until implemented, scripts can be run manually through Fusion 360's Scripts and Add-Ins interface.
+The `tools/` directory is the home for individual projects. A tool should be listed as implemented only after its files and behavior are present and validated.
 
 ## Repository structure
-
-The layout below is the intended project structure; directories will be added as their modules are implemented.
 
 ```text
 ai-to-cad-project/
 ├── README.md
-├── mcp-server/                    # Planned local bridge to Fusion 360
-│   ├── server.py
-│   └── fusion_client.py
-├── modules/
+├── LICENSE
+├── tools/
+│   ├── README.md
 │   ├── iphone-automation-mount/
 │   │   ├── README.md
-│   │   └── generate_mount.py
-│   ├── text-to-fastener/
-│   │   └── generate_fastener.py
-│   └── enclosure-generator/
-├── prompts/
-│   ├── fusion360_system_prompt.md
-│   └── engineering_rules.md
-└── tests/
+│   │   ├── generate_mount.py
+│   │   └── exports/                 # Optional generated examples
+│   └── text-to-screw-generator/
+│       ├── README.md
+│       ├── generate_screw.py
+│       └── presets.json
+├── utils/                            # Optional shared CAD helpers
+├── prompts/                          # Planned reusable AI and engineering prompts
+└── tests/                            # Planned validation checks
 ```
 
-## Getting started
+This describes the intended layout. The tool folders and example scripts will be added as they are implemented; exported CAD files are optional and should be generated from validated scripts.
 
-### Run a script in Fusion 360
+## Quickstart: Fusion 360 scripts
 
-Once a module script has been added:
+Once a Fusion 360 script has been added to a tool folder:
 
-1. Clone this repository.
+1. Clone or download this repository.
 2. Open Autodesk Fusion 360 and open **Scripts and Add-Ins** (Shift+S).
-3. Add the module script and run it.
-4. Inspect the resulting feature tree and geometry, then save or export the design.
+3. Add the tool's script folder under **My Scripts**.
+4. Select the script and click **Run**.
+5. Review the resulting feature tree and geometry, adjust parameters, and export as needed.
 
-Fusion 360's API and scripting environment are specific to Fusion 360. A regular system Python interpreter does not provide the Fusion `adsk` API modules.
+Fusion 360's `adsk` API is available in its scripting environment; a regular system Python interpreter does not provide those modules. Follow the specific Fusion 360 API setup and requirements for your installed version.
 
-### MCP workflow (planned)
+## AI-to-CAD and MCP direction
 
-The intended workflow is to run a local MCP service, connect it to a Fusion 360-side script runner, and let an authorized AI client request model operations. This bridge is not currently included. Any future implementation should validate incoming operations and avoid executing untrusted code without review.
+The long-term workflow is to translate natural-language requirements into reviewed Fusion 360 API operations, run them in Fusion 360, inspect the resulting model, and export the design. A local MCP bridge and automated feedback loop are future work and are not currently provided by this repository. Any execution bridge should validate requests and avoid running untrusted generated code without review.
 
-## CAD and engineering conventions
+## Tool development standards
 
-Scripts and generated designs should follow these principles:
-
-- **Make units explicit.** Fusion 360's internal database length unit is centimeters. For millimeter-defined inputs, a conversion helper such as `mm = 0.1` converts millimeters to centimeters; document the units of every parameter and API value.
-- **Prefer deterministic feature construction.** Use named parameters and stable sketch geometry. Avoid relying on fragile edge indices for fillets or other topology-dependent operations where possible.
-- **Validate generated geometry.** Check that expected bodies and features exist and that the resulting solid has sensible dimensions and volume.
-- **Treat manufacturing constraints as process-specific.** Clearances, wall thicknesses, overhangs, fillets, and tolerances depend on material, printer or machine, orientation, load, and intended use. Document assumptions and validate before manufacturing.
-- **Keep designs editable.** Use meaningful parameter names and a feature tree that makes expected changes straightforward.
+- **Make units explicit.** Fusion 360's internal database length unit is centimeters. For millimeter-defined inputs, a helper such as `mm = 0.1` converts millimeters to centimeters; document the units used by parameters and API values.
+- **Prefer deterministic geometry.** Use named parameters and stable sketch geometry. Avoid fragile dependence on edge indices for fillets or other topology-sensitive operations where practical.
+- **Keep tools self-contained.** Each tool should include a short README, its script, configuration or presets where needed, and usage instructions.
+- **Validate before export.** Check dimensions, expected bodies, and geometry; test fit, strength, and process-specific constraints before manufacturing.
+- **Keep designs editable.** Use meaningful parameter names and a clear feature tree.
 
 ## Roadmap
 
-- [ ] Add and validate a first Fusion 360 parametric module.
-- [ ] Add reusable prompts for Fusion 360 API scripting and engineering assumptions.
-- [ ] Add automated or in-Fusion checks for dimensions, bodies, and volume.
-- [ ] Build a local MCP-to-Fusion 360 bridge with explicit execution safeguards.
-- [ ] Add export workflows for STEP and mesh formats.
-- [ ] Explore feedback from Fusion 360 errors and model checks to improve generated scripts.
+- [ ] Add and validate a first parametric Fusion 360 tool.
+- [ ] Add reusable prompts and shared helpers for common CAD conventions.
+- [ ] Add tests or in-Fusion checks for dimensions, bodies, and volume.
+- [ ] Develop a safeguarded local MCP-to-Fusion 360 bridge.
+- [ ] Add documented export workflows for STEP and mesh formats.
 
 ## License
 
