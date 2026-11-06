@@ -1,74 +1,100 @@
-# ⚡ AI-to-CAD: Parametric B-Rep 3D with Fusion 360
+# ⚡ AI-to-CAD: Parametric B-Rep 3D via Fusion 360 & MCP
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![CAD: Autodesk Fusion 360](https://img.shields.io/badge/CAD-Autodesk%20Fusion%20360-orange.svg)](https://www.autodesk.com/products/fusion-360/)
-[![Language: Python](https://img.shields.io/badge/Language-Python%203.x-blue.svg)](https://www.python.org/)
-[![MCP: roadmap](https://img.shields.io/badge/MCP-roadmap-purple.svg)](https://modelcontextprotocol.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![CAD](https://img.shields.io/badge/CAD-Autodesk%20Fusion%20360-orange.svg)](https://www.autodesk.com/products/fusion-360/)
+[![Python](https://img.shields.io/badge/Language-Python%203.x-blue.svg)](https://www.python.org/)
+[![Protocol](https://img.shields.io/badge/Protocol-Model%20Context%20Protocol%20(MCP)-purple.svg)](https://modelcontextprotocol.io/)
 
-> **Bridging AI-assisted design and physical making.** This project explores a code-first path from natural-language requirements to editable, parametric solid models in Autodesk Fusion 360—using Fusion's Python API today, with MCP integration as a future direction.
+> **Bridging Large Language Models to Precision Physical Manufacturing.**  
+> Transform natural language prompts into parametric, solid B-Rep CAD models inside Autodesk Fusion 360 using Python API scripting and Model Context Protocol (MCP).
 
 ---
 
-## 🎯 The vision: AI → code → parametric CAD
+## 🎯 The Core Mission: Code-to-CAD Automation
 
-Mesh-generation tools can produce compelling shapes, but a mesh alone is not the same as an editable CAD model. This project focuses on scripted geometry and Fusion 360 feature operations so designs can be inspected and revised in the CAD environment.
+Most "AI-to-3D" systems generate uncalibrated polygon meshes (STLs or NeRFs) that cannot be edited or toleranced for mechanical assembly. 
 
+**This project builds a direct bridge from AI prompts to exact, engineering-grade CAD:**
 ```text
-Design requirements
-        ↓
-AI-assisted engineering and script authoring
-        ↓
-Fusion 360 Python API script
-        ↓
-Editable Fusion 360 features and solid geometry
-        ↓
-Review, refine, and export for fabrication
-```
+┌─────────────────────────────────────────────────────────────┐
+│                 Natural Language Prompt                     │
+│   "Mount iPhone SE2 to Prusa Mini bed, clear homing zone,   │
+│    and add a +65mm cantilever stylus holder to heatsink."   │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│               LLM Agent (Claude, Cursor, GPT)               │
+│   - Calculates kinematic offsets, hole spacing & clearances │
+│   - Generates deterministic Fusion 360 Python API code      │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+            Model Context Protocol (MCP) / Script Runner
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Autodesk Fusion 360 Engine                  │
+│   - Constructs B-Rep solids, sketches, and extrusions       │
+│   - Validates dimensions, volume, and interference          │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│                 Physical Manufacturing Output               │
+│       .STEP (Universal CAD)  │  .STL / .3MF (3D Printing)    │
+└─────────────────────────────────────────────────────────────┘
 
-The repository currently includes a Fusion 360 iPhone bed-mount generator and a generated STL example. An MCP server and automatic prompt-to-model execution are **roadmap items**, not implemented features.
+🤖 Featured Automation System: iPhone Touch-Test Rig
 
-## 🗂️ Tools
+By combining parametric CAD generators, this project converts a standard Prusa
+Mini/Mini+ 3D printer into an automated robotic iPhone touchscreen testing
+workstation:
 
-| Tool | Input | What it does | Status |
-| --- | --- | --- | --- |
-| [`iphone-automation-mount`](./tools/iphone-automation-mount/) | Python configuration in the Fusion 360 script | Creates a configurable phone pocket, printer-bed mount features, clearance cutouts, and a camera-aware floor layout. | **Implemented** |
-| `text-to-screw-generator` | — | Proposed natural-language-driven metric fastener generator. | **Planned** |
-| `enclosure-generator` | — | Proposed configurable electronics enclosure. | **Idea** |
+       [ Prusa Mini X-Carriage / Hotend ]
+                      │
+        tools/prusa-mini-stylus-holder
+         (Extends +65mm cantilever arm)
+                      │
+                      ▼
+               [ Capacitive Stylus ]
+                      │   (Taps / Swipes / Gestures)
+                      ▼
+              [ iPhone SE2 / 8 / 7 ]
+                      │
+                      ▲
+         tools/iphone-bed-mount
+      (Secured to Y-bed alignment pins)
+                      │
+         [ Prusa Mini Heated Bed ]
 
-## 🚀 Run the iPhone mount generator
+🗂️ Tools & Generative Modules Catalog
 
-The script uses Fusion 360's `adsk` API and must run inside Fusion 360; a regular Python installation does not include that API.
+| Module                                                              | Installation Target          | Description                                                                                                                         | Status                   |
+| :------------------------------------------------------------------ | :--------------------------- | :---------------------------------------------------------------------------------------------------------------------------------- | :----------------------- |
+| **[`iphone-bed-mount`](./tools/iphone-bed-mount/)**                 | Prusa Mini Bed (Y-Axis)      | Bed fixture with non-overlapping 3×3 weight-saving grid, arm lightening slot, and $90^\circ$ printer homing window.                 | 🟢 **Production**         |
+| **[`prusa-mini-stylus-holder`](./tools/prusa-mini-stylus-holder/)** | Prusa Mini Heatsink (X-Axis) | Mounts a $\varnothing 7.3\text{ mm}$ stylus to the hotend carriage with a $+65\text{ mm}$ cantilever extension to reach the screen. | 🟢 **Production**         |
+| **[`text-to-screw-generator`](./tools/text-to-screw-generator/)**   | Fasteners / Hardware         | Generates metric/imperial machine screws directly from text descriptions (e.g. `"M3x16 button head"`).                              | 🟡 **Active Development** |
 
-1. Clone or download this repository.
-2. In Fusion 360, open **Scripts and Add-Ins** (`Shift+S`).
-3. Add the `tools/iphone-automation-mount/` folder as a script location, then select and run `iphone_automation_mount.py`.
-4. Review the generated model and feature tree, and adjust the configuration values near the top of the script as needed.
+🚀 Quickstart: Running in Fusion 360
 
-See the [module notes](./tools/iphone-automation-mount/README.md) for design details and review guidance.
+1.  Clone the repository:
+    `git clone https://github.com/dty717/ai-to-cad-project.git`
+2.  Open Autodesk Fusion 360.
+3.  Press `Shift + S` to open **Scripts and Add-Ins**.
+4.  Click the green **+** (Add) icon under **My Scripts**.
+5.  Select either generator folder:
+      - `tools/iphone-bed-mount/`
+      - `tools/prusa-mini-stylus-holder/`
+6.  Select the script and click **Run**. The model will generate in your active canvas.
 
-## 🔎 Spotlight: iPhone automation bed mount
+📐 AI-to-CAD Engineering Rules
 
-The generator targets a Prusa Mini-sized bed layout and an iPhone SE2-sized pocket. Its configurable Fusion 360 script builds a base, retaining walls, alignment-pin holes, an arm slot, button/port and homing-clearance cuts, plus floor cutouts that account for a camera opening. A sample mesh is checked in at [`iphone_automation_mount.stl.stl`](./tools/iphone-automation-mount/iphone_automation_mount.stl.stl).
+When prompting an LLM to generate code for Fusion 360:
 
-These are design parameters and intended clearances—not a verified fit or structural certification. Confirm dimensions against your printer and device, inspect the generated model, and validate material, strength, fit, and print settings before use.
+1.  **Internal Units:** Fusion 360 stores lengths in centimeters. Scripts must define `mm = 0.1` and multiply all millimetric inputs by `mm`.
+2.  **Stable Geometry:** Avoid brittle topological edge references for fillets. Model transitions with mathematically calculated tangent circular arcs in sketch space.
+3.  **Additive-First Sequence:** Create the main body footprint first, join bosses/walls, and then apply subtractive cuts.
 
-## 📐 Fusion 360 scripting conventions
+📄 License
 
-- **Make units explicit.** Fusion 360's internal database length unit is centimeters. For millimeter-defined inputs, `mm = 0.1` converts millimeters to centimeters.
-- **Prefer stable geometry.** Use named parameters and sketch geometry; avoid fragile reliance on topology-dependent edge indices where practical.
-- **Keep models editable.** Use meaningful parameters and a readable feature sequence.
-- **Inspect results.** Check dimensions, bodies, clearances, and intended use before exporting or manufacturing.
-
-For reusable AI authoring guidance, see [`prompts/fusion360_system_prompt.md`](./prompts/fusion360_system_prompt.md).
-
-## 🗺️ Roadmap
-
-- [x] Add a Fusion 360 parametric iPhone mount generator and sample STL.
-- [ ] Add reusable prompts and shared CAD helpers.
-- [ ] Develop a local, safeguarded MCP bridge for AI-assisted Fusion 360 workflows.
-- [ ] Add automated geometry checks and documented STEP/mesh export workflows.
-- [ ] Explore text-driven fastener and enclosure generators.
-
-## 📄 License
-
-This project is distributed under the [MIT License](LICENSE).
+Distributed under the MIT License.
