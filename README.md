@@ -1,78 +1,74 @@
-# 🛠️ Parametric CAD Toolkit
+# ⚡ AI-to-CAD: Parametric B-Rep 3D with Fusion 360
 
-> **A code-to-CAD toolkit for parametric design and digital fabrication.** This project collects programmatic CAD generators and design-automation scripts for Autodesk Fusion 360, with a path toward AI-assisted workflows and an MCP bridge.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CAD: Autodesk Fusion 360](https://img.shields.io/badge/CAD-Autodesk%20Fusion%20360-orange.svg)](https://www.autodesk.com/products/fusion-360/)
+[![Language: Python](https://img.shields.io/badge/Language-Python%203.x-blue.svg)](https://www.python.org/)
+[![MCP: roadmap](https://img.shields.io/badge/MCP-roadmap-purple.svg)](https://modelcontextprotocol.io/)
 
-## About
+> **Bridging AI-assisted design and physical making.** This project explores a code-first path from natural-language requirements to editable, parametric solid models in Autodesk Fusion 360—using Fusion's Python API today, with MCP integration as a future direction.
 
-Instead of manually modeling repetitive or configurable parts, the tools in this repository aim to generate editable CAD geometry from scripts and design parameters. The focus is on native Fusion 360 sketches and features, with export to formats such as STEP, STL, and 3MF where supported.
+---
 
-Generated models are design starting points, not guarantees of manufacturing readiness. Verify dimensions, material, clearances, loads, and process-specific tolerances before using a design in production.
+## 🎯 The vision: AI → code → parametric CAD
 
-## Tools catalog
-
-| Tool | Category | Input | Description | Status |
-| --- | --- | --- | --- | --- |
-| [`iphone-automation-mount`](./tools/iphone-automation-mount/) | Jigs and fixtures | Script parameters | Planned parametric bed-mounted iPhone fixture concept with printer clearance requirements. | Planned |
-| [`text-to-screw-generator`](./tools/text-to-screw-generator/) | Fasteners | Designation and parameters | Planned configurable screw generator for metric sizes and head styles. | Planned |
-| `future-tools` | Mechanical design | To be determined | Future ideas may include enclosures, gears, and other parametric utilities. | Planned |
-
-The `tools/` directory is the home for individual projects. A tool should be listed as implemented only after its files and behavior are present and validated.
-
-## Repository structure
+Mesh-generation tools can produce compelling shapes, but a mesh alone is not the same as an editable CAD model. This project focuses on scripted geometry and Fusion 360 feature operations so designs can be inspected and revised in the CAD environment.
 
 ```text
-ai-to-cad-project/
-├── README.md
-├── LICENSE
-├── tools/
-│   ├── README.md
-│   ├── iphone-automation-mount/
-│   │   ├── README.md
-│   │   ├── generate_mount.py
-│   │   └── exports/                 # Optional generated examples
-│   └── text-to-screw-generator/
-│       ├── README.md
-│       ├── generate_screw.py
-│       └── presets.json
-├── utils/                            # Optional shared CAD helpers
-├── prompts/                          # Planned reusable AI and engineering prompts
-└── tests/                            # Planned validation checks
+Design requirements
+        ↓
+AI-assisted engineering and script authoring
+        ↓
+Fusion 360 Python API script
+        ↓
+Editable Fusion 360 features and solid geometry
+        ↓
+Review, refine, and export for fabrication
 ```
 
-This describes the intended layout. The tool folders and example scripts will be added as they are implemented; exported CAD files are optional and should be generated from validated scripts.
+The repository currently includes a Fusion 360 iPhone bed-mount generator and a generated STL example. An MCP server and automatic prompt-to-model execution are **roadmap items**, not implemented features.
 
-## Quickstart: Fusion 360 scripts
+## 🗂️ Tools
 
-Once a Fusion 360 script has been added to a tool folder:
+| Tool | Input | What it does | Status |
+| --- | --- | --- | --- |
+| [`iphone-automation-mount`](./tools/iphone-automation-mount/) | Python configuration in the Fusion 360 script | Creates a configurable phone pocket, printer-bed mount features, clearance cutouts, and a camera-aware floor layout. | **Implemented** |
+| `text-to-screw-generator` | — | Proposed natural-language-driven metric fastener generator. | **Planned** |
+| `enclosure-generator` | — | Proposed configurable electronics enclosure. | **Idea** |
+
+## 🚀 Run the iPhone mount generator
+
+The script uses Fusion 360's `adsk` API and must run inside Fusion 360; a regular Python installation does not include that API.
 
 1. Clone or download this repository.
-2. Open Autodesk Fusion 360 and open **Scripts and Add-Ins** (Shift+S).
-3. Add the tool's script folder under **My Scripts**.
-4. Select the script and click **Run**.
-5. Review the resulting feature tree and geometry, adjust parameters, and export as needed.
+2. In Fusion 360, open **Scripts and Add-Ins** (`Shift+S`).
+3. Add the `tools/iphone-automation-mount/` folder as a script location, then select and run `iphone_automation_mount.py`.
+4. Review the generated model and feature tree, and adjust the configuration values near the top of the script as needed.
 
-Fusion 360's `adsk` API is available in its scripting environment; a regular system Python interpreter does not provide those modules. Follow the specific Fusion 360 API setup and requirements for your installed version.
+See the [module notes](./tools/iphone-automation-mount/README.md) for design details and review guidance.
 
-## AI-to-CAD and MCP direction
+## 🔎 Spotlight: iPhone automation bed mount
 
-The long-term workflow is to translate natural-language requirements into reviewed Fusion 360 API operations, run them in Fusion 360, inspect the resulting model, and export the design. A local MCP bridge and automated feedback loop are future work and are not currently provided by this repository. Any execution bridge should validate requests and avoid running untrusted generated code without review.
+The generator targets a Prusa Mini-sized bed layout and an iPhone SE2-sized pocket. Its configurable Fusion 360 script builds a base, retaining walls, alignment-pin holes, an arm slot, button/port and homing-clearance cuts, plus floor cutouts that account for a camera opening. A sample mesh is checked in at [`iphone_automation_mount.stl.stl`](./tools/iphone-automation-mount/iphone_automation_mount.stl.stl).
 
-## Tool development standards
+These are design parameters and intended clearances—not a verified fit or structural certification. Confirm dimensions against your printer and device, inspect the generated model, and validate material, strength, fit, and print settings before use.
 
-- **Make units explicit.** Fusion 360's internal database length unit is centimeters. For millimeter-defined inputs, a helper such as `mm = 0.1` converts millimeters to centimeters; document the units used by parameters and API values.
-- **Prefer deterministic geometry.** Use named parameters and stable sketch geometry. Avoid fragile dependence on edge indices for fillets or other topology-sensitive operations where practical.
-- **Keep tools self-contained.** Each tool should include a short README, its script, configuration or presets where needed, and usage instructions.
-- **Validate before export.** Check dimensions, expected bodies, and geometry; test fit, strength, and process-specific constraints before manufacturing.
-- **Keep designs editable.** Use meaningful parameter names and a clear feature tree.
+## 📐 Fusion 360 scripting conventions
 
-## Roadmap
+- **Make units explicit.** Fusion 360's internal database length unit is centimeters. For millimeter-defined inputs, `mm = 0.1` converts millimeters to centimeters.
+- **Prefer stable geometry.** Use named parameters and sketch geometry; avoid fragile reliance on topology-dependent edge indices where practical.
+- **Keep models editable.** Use meaningful parameters and a readable feature sequence.
+- **Inspect results.** Check dimensions, bodies, clearances, and intended use before exporting or manufacturing.
 
-- [ ] Add and validate a first parametric Fusion 360 tool.
-- [ ] Add reusable prompts and shared helpers for common CAD conventions.
-- [ ] Add tests or in-Fusion checks for dimensions, bodies, and volume.
-- [ ] Develop a safeguarded local MCP-to-Fusion 360 bridge.
-- [ ] Add documented export workflows for STEP and mesh formats.
+For reusable AI authoring guidance, see [`prompts/fusion360_system_prompt.md`](./prompts/fusion360_system_prompt.md).
 
-## License
+## 🗺️ Roadmap
 
-This project is licensed under the [MIT License](LICENSE).
+- [x] Add a Fusion 360 parametric iPhone mount generator and sample STL.
+- [ ] Add reusable prompts and shared CAD helpers.
+- [ ] Develop a local, safeguarded MCP bridge for AI-assisted Fusion 360 workflows.
+- [ ] Add automated geometry checks and documented STEP/mesh export workflows.
+- [ ] Explore text-driven fastener and enclosure generators.
+
+## 📄 License
+
+This project is distributed under the [MIT License](LICENSE).
