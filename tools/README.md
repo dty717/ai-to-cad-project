@@ -2,14 +2,11 @@
 
 This directory contains utility tooling for Fusion 360 workflows and related developer support scripts.
 
-Project-specific CAD generators live in the [`../projects/`](../projects/) directory instead of under `tools/`.
-
 ## Tool catalog
 
 | Tool | Description | Status |
 | --- | --- | --- |
 | [`fusion-mcp-studio`](./fusion-mcp-studio/) | Browser UI for connecting to Fusion 360's MCP server, editing/running Python scripts, discovering local scripts, and viewing screenshots. | Implemented |
-| `text-to-screw-generator` | Proposed configurable metric fastener generator. | Planned; no generator files yet |
 
 ## Using Fusion MCP Studio
 
