@@ -30,9 +30,10 @@ flowchart LR
 ```
 
 1. **Specify** the requirements, interfaces, dimensions, and constraints in a project prompt.
-2. **Generate or adapt** a script using the [Fusion 360 export prompt](./prompts/export_one_shot_prompt.md) as guidance.
+2. **Generate or adapt** a script by saying using Fusion 360 python scripts.
 3. **Run** the script in Fusion 360's Scripts and Add-Ins environment, or use the MCP tooling described in [`tools/README.md`](./tools/README.md).
 4. **Review and iterate** on the resulting design in Fusion.
+5. **Export the one-shot prompt**: Once the design is working, distill the conversation into a reusable prompt using the [Fusion 360 export prompt](./prompts/export_one_shot_prompt.md) as guidance.
 
 ## Projects
 
