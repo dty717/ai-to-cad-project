@@ -5,11 +5,11 @@
 [![Language: Python 3](https://img.shields.io/badge/Language-Python%203-blue.svg)](https://www.python.org/)
 [![MCP tooling](https://img.shields.io/badge/Integration-MCP-purple.svg)](./tools/)
 
-> A prompt-driven workflow for translating mechanical requirements into editable Autodesk Fusion models using the native Python API. This repository brings together design prompts, Fusion scripts, examples, and tooling for rapid parametric model generation.
+> A prompt-driven workflow for translating mechanical requirements into editable Autodesk Fusion models using the native Python API. This repository brings together design prompts, Fusion scripts, examples, and tooling for generating editable parametric CAD content.
 
 ## Why AI-to-CAD?
 
-Many generative 3D workflows produce triangulated meshes such as `.stl` or `.obj`. Meshes can be useful for visualization and printing, but they are generally less convenient to dimension, constrain, or adapt parametrically.
+Many generative 3D workflows produce triangulated meshes such as `.stl` or `.obj`. Meshes can be useful for visualization and printing, but they are generally less convenient to dimension, constrain, revise, or adapt when design requirements change.
 
 This project focuses on generating **parametric B-Rep models** in Fusion:
 
@@ -38,9 +38,9 @@ flowchart LR
 
 | Project | Prompt | Fusion script | Included artifact / notes |
 | --- | --- | --- | --- |
-| **iPhone bed mount** | [Prompt](./projects/iphone-bed-mount/iphone-bed-mount_PROMPT.md) | [Script](./projects/iphone-bed-mount/iphone-bed-mount.py) | STL included |
-| **Prusa Mini stylus holder — standard** | [Prompt](./projects/prusa-mini-stylus-holder/stylus_holder_standard_PROMPT.md) | [Script](./projects/prusa-mini-stylus-holder/stylus_holder_standard.py) | STL and parametric script |
-| **Prusa Mini stylus holder — 65 mm offset** | [Prompt](./projects/prusa-mini-stylus-holder/stylus_holder_offset_65mm_PROMPT.md) | [Script](./projects/prusa-mini-stylus-holder/stylus_holder_offset_65mm.py) | Offset variant |
+| **iPhone bed mount** | [Prompt](./projects/iphone-automation-mount/iphone-bed-mount/iphone-bed-mount_PROMPT.md) | [Script](./projects/iphone-automation-mount/iphone-bed-mount/iphone-bed-mount.py) | STL included |
+| **Prusa Mini stylus holder — standard** | [Prompt](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_standard_PROMPT.md) | [Script](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_standard.py) | STL included |
+| **Prusa Mini stylus holder — 65 mm offset** | [Prompt](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_offset_65mm_PROMPT.md) | [Script](./projects/iphone-automation-mount/prusa-mini-stylus-holder/stylus_holder_offset_65mm.py) | STL included |
 | **iPhone automation mount** | [Project overview](./projects/iphone-automation-mount/README.md) | — | Project documentation |
 
 See [`projects/`](./projects/) for project organization and notes.
@@ -56,14 +56,14 @@ See [`projects/`](./projects/) for project organization and notes.
 
 1. Open Fusion 360.
 2. Press **Shift + S** to open **Scripts and Add-Ins**.
-3. Add or select the folder containing the script you want to run, for example `projects/iphone-bed-mount/`.
+3. Add or select the folder containing the script you want to run, for example `projects/iphone-automation-mount/iphone-bed-mount/`.
 4. Select the script and click **Run**.
 
 These scripts use Fusion's `adsk` API and must run inside Fusion's scripting environment; they are not standalone system-Python programs.
 
 ## Fusion API notes
 
-- Fusion's internal database unit for lengths is centimeters. For length values, `ValueInput.createByReal(10)` represents 10 cm—not 10 mm. Use `ValueInput.createByString("25 mm")` when specifying a length in millimeters.
+- Fusion's internal database unit for lengths is centimeters. For length values, `ValueInput.createByReal(10)` represents 10 cm—not 10 mm. Use `ValueInput.createByString("25 mm")` when specifying a value in millimeters.
 - Avoid relying on arbitrary profile indices when selecting sketch regions. Where practical, identify the intended profile from its geometry or location.
 - Make script errors visible during development by handling exceptions and reporting useful traceback information in Fusion's UI or log.
 
@@ -80,16 +80,17 @@ ai-to-cad-project/
 ├── projects/
 │   ├── README.md
 │   ├── iphone-automation-mount/
-│   │   └── README.md
-│   ├── iphone-bed-mount/
-│   │   ├── iphone-bed-mount_PROMPT.md
-│   │   ├── iphone-bed-mount.py
-│   │   └── iphone-bed-mount.stl
-│   └── prusa-mini-stylus-holder/
-│       ├── stylus_holder_standard_PROMPT.md
-│       ├── stylus_holder_standard.py
-│       ├── stylus_holder_offset_65mm_PROMPT.md
-│       └── stylus_holder_offset_65mm.py
+│   │   ├── README.md
+│   │   ├── iphone-bed-mount/
+│   │   │   ├── iphone-bed-mount_PROMPT.md
+│   │   │   ├── iphone-bed-mount.py
+│   │   │   └── iphone-bed-mount.stl
+│   │   └── prusa-mini-stylus-holder/
+│   │       ├── stylus_holder_standard_PROMPT.md
+│   │       ├── stylus_holder_standard.py
+│   │       ├── stylus_holder_offset_65mm_PROMPT.md
+│   │       └── stylus_holder_offset_65mm.py
+│   └── ...
 ├── prompts/
 │   └── fusion360_system_prompt.md
 ├── tools/
