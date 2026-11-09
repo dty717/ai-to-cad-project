@@ -8,6 +8,8 @@ Model the part as a single solid body using a standard human modeling sequence:
 
 ### 1. Bed Attachment & Side Arm
 - **Rear Mount Bar:** Sits along the back edge of the bed and hooks directly onto the Prusa Mini's two rear bed alignment pins. Round off the outer ends so there are no sharp edges.
+- **Left End:** Finish with a rounded semi-circular nose extending slightly past the left alignment pin.
+- **Top-Right Stepped Corner (Heatbed LED Wrap Relief):** Instead of an arc fillet corner, model the outer top-right corner as a sharp 90-degree rectangular step cutout (22 mm along the back edge × 10 mm forward along the right edge) directly on the outer boundary lines. This clears the heatbed's status LED and its 3D-printed wrap with zero interference.
 - **Connecting Arm:** Runs forward along the right side of the bed to hold the phone cradle. 
 - **Strength & Weight:** 
   - Add a smooth, generous curve where the arm meets the rear mount bar so the joint does not snap under vibration.
