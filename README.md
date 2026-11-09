@@ -15,8 +15,8 @@ This project focuses on generating **parametric B-Rep models** in Fusion:
 
 - **Native CAD features:** Build models from Fusion sketches and modeling features rather than treating the result only as a triangle mesh.
 - **Editable designs:** Keep the design in Fusion so you can inspect and revise its geometry and feature history.
-- **Prompt-guided workflow:** Pair mechanical requirements with Fusion-specific prompt guidance and runnable Python scripts.
-- **MCP tooling:** `tools/fusion-mcp-studio` provides a browser UI for connecting to Fusion's MCP server, editing and running scripts, discovering local scripts, and viewing screenshots. See [Tools](./tools/README.md).
+- **Prompt-guided workflow:** Use the repository's [system prompt](./prompts/system_prompt.md) and project-specific design prompts with runnable Fusion Python scripts.
+- **MCP tooling:** [`tools/fusion-mcp-studio`](./tools/fusion-mcp-studio/) provides a browser UI for connecting to Fusion's MCP server, editing and running scripts, discovering local scripts, and viewing screenshots. See [Tools](./tools/README.md) for setup.
 
 ## Workflow
 
