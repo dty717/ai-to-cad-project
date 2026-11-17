@@ -326,7 +326,18 @@ def run(_context: str):
     try { const res = await postJsonRpc(endpoint, payload), elapsed = Date.now() - start; logToConsole("success", `Screenshot Received in ${elapsed}ms`, res); scanAndDisplayImages(res); showConfirm("Screenshot Captured", `Received screenshot in ${elapsed}ms!`); }
     catch (err) { logToConsole("error", "Screenshot Failed: " + err.message); showConfirm("Screenshot Failed", err.message, false); } finally { btn.disabled = false; }
   }
-  window.onload = () => { document.getElementById("pythonCode").value = builtInScripts.userMessageBox; };
+  window.onload = () => {
+    document.getElementById("pythonCode").value = builtInScripts.userMessageBox;
+
+    const isPhone = /iPhone|Android|Mobile|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent || navigator.vendor || window.opera);
+    if (isPhone) {
+      const endpointInput = document.getElementById("endpoint");
+      const phonePort = "27184"; // Change this if your HTTPS proxy runs on a different port (e.g., 27183 or 8443)
+      endpointInput.value = endpointInput.value
+        .replace(/^http:\/\//i, "https://")
+        .replace(/:27183\b/, `:${phonePort}`);
+    }
+  };
 </script>
 </body>
 </html>
