@@ -6,35 +6,35 @@ import traceback
 # ==============================================================================
 # CONFIGURATION (all dimensions in mm)
 # ==============================================================================
-
 CFG = {
-    'rod_spacing': 45.0,        # Center-to-center vertical distance between X smooth rods
-    'rod_dia': 8.0,             # Smooth rod diameter
-    'rod_clear_dia': 9.6,       # End-wall rod clearance slot diameter
-    'lm8uu_od': 15.2,           # LM8UU 15mm OD + 0.2mm print fit clearance
-    'lm8uu_len': 24.4,          # LM8UU 24mm length + 0.4mm axial clearance
-    'carriage_width': 55.0,     # Total carriage width along X
-    'belt_width': 6.8,          # Horizontal GT2 belt channel width along Y (6mm belt + 0.8mm clearance)
-    'screw_hole_dia': 3.4,      # M3 clearance bore
-    'screw_thread_dia': 3.2,    # M3 self-threading / tight pass bore
-    'screw_head_dia': 6.2,      # M3 screw head counterbore
-    'belt_clamp_x': 8.0,        # Left/Right X offset of the 2 belt-clamp screws (+/- 8.0mm, clears +/-16mm rear grid)
-    'belt_clamp_y': -16.7,      # Y centerline of vertical belt-clamp screws & side-entry nut bays
-    'mount_screw_x': 16.5,      # X offset of front syringe-mount screw grid (+/- 16.5mm -> 33mm wide)
-    'mount_screw_z_lo': 12.5,   # Lower Z of front syringe-mount screw grid (clear of stylus Z=6.5)
-    'mount_screw_z_hi': 32.5,   # Upper Z of front syringe-mount screw grid (clear of stylus Z=38.5)
-    'stylus_hole_offset': 16.0, # Stylus holder HOLE_OFFSET (+/- 16.0mm -> 32x32mm grid)
-    'stylus_center_z': 22.5,    # Centered between rods (holes at Z=6.5 & 38.5, both clear of rods)
-    'rear_mount_x': 16.0,       # X offset of rear/bottom M3 grid (+/- 16.0mm -> 32.0mm wide)
-    'rear_mount_z_lo': 6.5,     # Lower Z of rear/bottom M3 grid
-    'rear_mount_z_hi': 38.5,    # Upper Z of rear/bottom M3 grid (32.0mm tall)
-    'sensor_dia': 8.0,          # Single Z-distance sensor OD (8.0mm SuperPINDA/MINDA; 12.0mm LJ12A3)
-    'sensor_x': 32.5,           # Distance sensor X center (clears syringe mount & minimizes X-overhang)
-    'sensor_y': 22.66,          # Distance sensor Y center (aligned with vacuum nozzle Y=22.66 -> dY=0)
-    'sensor_z_mid': -6.5,       # Distance sensor clamp Z midpoint (-15.5..+2.5, flush with carriage bottom)
-    'sensor_h': 18.0,           # Distance sensor clamp vertical height
-    'syringe_od': 10.3,         # Dedicated PnP_Sized_Syringe_Mount OD (1mL6.8, 3mL10.3, 5mL13.8, 10mL16.2)
-    'nozzle_od': 8.0,           # Printable PnP_Vacuum_Nozzle_Adapter barrel OD
+    'rod_spacing': 34.0,          # Center-to-center vertical distance between X smooth rods (verify: outer_to_outer - 8.0)
+    'rod_dia': 8.0,               # Smooth rod diameter
+    'rod_clear_dia': 9.6,         # End-wall rod clearance bore diameter
+    'lm8uu_od': 15.2,             # LM8UU 15mm OD + 0.2mm print fit clearance
+    'lm8uu_len': 24.4,            # LM8UU 24mm length + 0.4mm axial clearance
+    'carriage_width': 55.0,       # Total carriage width along X
+    'belt_width': 6.8,            # Horizontal GT2 belt channel width along Y (centered at Y=0.0, aligned with LM8UU)
+    'belt_spacing': 11.4,         # Center-to-center Z distance between upper & lower GT2 belt runs (623 idler 10mm + 1.38mm belt)
+    'screw_hole_dia': 3.4,        # M3 clearance bore
+    'screw_thread_dia': 3.2,      # M3 self-threading / tight pass bore
+    'screw_head_dia': 6.2,        # M3 screw head counterbore
+    'belt_clamp_x': 8.0,          # Left/Right X offset of the 2 belt-clamp screws (+/- 8.0mm, clears +/-16mm rear grid)
+    'belt_clamp_y': -13.8,        # Y centerline of vertical belt-clamp screws & nut bays (clears -10.5 cap & -17.4 rear nut bays)
+    'mount_screw_x': 16.5,        # X offset of front syringe-mount screw grid (+/- 16.5mm -> 33mm wide)
+    'mount_screw_z_lo': 6.5,      # Lower Z of front syringe-mount screw grid (blind in front of Y=+4.5mm)
+    'mount_screw_z_hi': 26.5,     # Upper Z of front syringe-mount screw grid (20mm tall, clear of stylus Z=17.0)
+    'stylus_hole_offset': 16.0,   # Stylus holder HOLE_OFFSET (+/- 16.0mm -> 32x32mm grid)
+    'stylus_center_z': 33.0,      # Centered at z_mid + 16.0 (holes at Z=17.0 & 49.0 for rod_spacing=34.0)
+    'rear_mount_x': 16.0,         # X offset of rear/bottom M3 grid (+/- 16.0mm -> 32.0mm wide)
+    'rear_mount_z_lo': 17.0,      # Lower Z of rear/bottom M3 grid (z_mid, between lower & upper belt runs)
+    'rear_mount_z_hi': 49.0,      # Upper Z of rear/bottom M3 grid (z_mid + 32.0, clear above upper rod)
+    'sensor_dia': 12.0,           # CHE12-4NA-A710 M12 inductive proximity sensor OD
+    'sensor_x': 34.5,             # Distance sensor X center (clears syringe mount & 20.2mm OD collar)
+    'sensor_y': 22.66,            # Distance sensor Y center (aligned with vacuum nozzle Y=22.66 -> dY=0)
+    'sensor_z_mid': -7.5,         # Distance sensor clamp Z midpoint (-16.5..+1.5, flush with carriage bottom)
+    'sensor_h': 18.0,             # Distance sensor clamp vertical height
+    'syringe_od': 10.3,           # Dedicated PnP_Sized_Syringe_Mount OD (1mL=6.8, 3mL=10.3, 5mL=13.8, 10mL=16.2)
+    'nozzle_od': 8.0,             # Printable PnP_Vacuum_Nozzle_Adapter barrel OD
 }
 
 
@@ -111,27 +111,52 @@ def register_user_parameters(design: adsk.fusion.Design) -> None:
         )
 
 
+def derive_layout() -> dict:
+    """Derive vertical layout coordinates parametrically from rod_spacing & belt_spacing."""
+    rs = CFG['rod_spacing']
+    bs = CFG['belt_spacing']
+    z_mid = rs / 2.0
+    z_belt_lo = z_mid - bs / 2.0
+    z_belt_hi = z_mid + bs / 2.0
+    return {
+        'rs': rs,
+        'z_mid': z_mid,
+        'z_bot': -16.5,
+        'z_top': z_mid + 37.5,          # 54.5mm at rs=34 -> 2.5mm solid roof above Z=49.0 nut bays
+        'z_belt_lo': z_belt_lo,
+        'z_belt_hi': z_belt_hi,
+        'z_cap_up_screw': rs + 12.0,    # 46.0mm at rs=34
+        'z_cap_lo_screw': -12.0,
+        'z_grid_lo': z_mid,             # 17.0mm at rs=34 (between belts)
+        'z_grid_hi': z_mid + 32.0,      # 49.0mm at rs=34 (above upper rod)
+    }
+
+
 def build_carriage_base(root: adsk.fusion.Component) -> None:
-    """Component 1: PnP_Carriage_Base with 2-piece bolted LM8UU cradles, 32x32mm grids & nozzle-aligned sensor mount."""
+    """Component 1: PnP_Carriage_Base with symmetric toothed upper/lower belt grooves, full-circle rod bores & nut bays."""
     occ = root.occurrences.addNewComponent(adsk.core.Matrix3D.create())
     occ.activate()
     comp = occ.component
     comp.name = 'PnP_Carriage_Base'
 
-    rs = CFG['rod_spacing']
+    lay = derive_layout()
+    rs = lay['rs']
+    z_bot = lay['z_bot']
+    z_top = lay['z_top']
+    z_belt_lo = lay['z_belt_lo']
+    z_belt_hi = lay['z_belt_hi']
+
     cw = CFG['carriage_width']
     hw = cw / 2.0
     lm_od = CFG['lm8uu_od']
     lm_len = CFG['lm8uu_len']
-    z_bot = -15.5           # Extended from -10.0 to support Z=-11.5 lower bearing-cap screws
-    z_top = rs + 15.5       # 60.5mm: extended from 55.0 to support Z=56.5 upper bearing-cap screws
     y_front = 13.5
-    y_snap = -2.8
+    y_snap = -3.8
     y_tower_back = -23.5
-    z_tower_bot = 9.0
-    z_tower_top = 30.8
+    z_tower_bot = z_belt_lo
+    z_tower_top = z_belt_hi
 
-    # 1. Main body with completely FLAT front (+Y = 13.5) and FLAT rear (-Y = -23.5) faces
+    # 1. Main body with completely FLAT front (+Y = 13.5) and FLAT rear (-Y = -23.5) symmetric belt tower
     sk_body = comp.sketches.add(comp.yZConstructionPlane)
     sk_body.name = 'Base_Side_Profile'
     draw_closed_poly(sk_body, [
@@ -146,103 +171,105 @@ def build_carriage_base(root: adsk.fusion.Component) -> None:
     ])
     extrude_symmetric(comp, sk_body, cw, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
 
-    # 1b. Upper rear outer mounting columns (X = +/-12.5..27.5, clears combined upper clamp at +/-12.1)
+    # 1b. Upper rear outer mounting columns (|X| = 12.5..27.5, clears Z <= z_belt_hi+2.2 belt-pinch wings)
     for side_tag, x_col in (('Left', -20.0), ('Right', 20.0)):
         pl_col = offset_plane(comp, comp.yZConstructionPlane, x_col, adsk.core.Vector3D.create(1, 0, 0))
         sk_col = comp.sketches.add(pl_col)
         sk_col.name = f'Upper_Rear_Mount_Column_{side_tag}'
         draw_closed_poly(sk_col, [
-            (x_col, y_tower_back, 30.6),
-            (x_col, -13.5, 30.6),
-            (x_col, -13.5, 31.8),
-            (x_col, -5.5, 31.8),
-            (x_col, -5.5, 30.6),
-            (x_col, y_front, 30.6),
-            (x_col, y_front, 40.0),
-            (x_col, -5.2, 40.0),
-            (x_col, -5.2, 44.5),
-            (x_col, y_tower_back, 44.5),
+            (x_col, y_tower_back, z_belt_hi + 2.5),
+            (x_col, y_front,      z_belt_hi + 2.5),
+            (x_col, y_front,      z_top),
+            (x_col, y_tower_back, z_top),
         ])
         extrude_symmetric(comp, sk_col, 15.0, adsk.fusion.FeatureOperations.JoinFeatureOperation)
 
-    # 1c. Lower rear outer mounting columns (X = +/-12.5..27.5, Z = 2.0..9.2, supports Z=6.5 rear holes)
+    # 1c. Lower outer rod cheeks (|X| = 12.5..27.5, encloses lower rod at Y=-7.5, clears Z >= z_belt_lo-2.2 pinch wings)
     for side_tag, x_col in (('Left', -20.0), ('Right', 20.0)):
-        pl_lcol = offset_plane(comp, comp.yZConstructionPlane, x_col, adsk.core.Vector3D.create(1, 0, 0))
-        sk_lcol = comp.sketches.add(pl_lcol)
-        sk_lcol.name = f'Lower_Rear_Mount_Column_{side_tag}'
-        draw_closed_poly(sk_lcol, [
-            (x_col, y_tower_back, 2.0),
-            (x_col, y_snap, 2.0),
-            (x_col, y_snap, z_tower_bot + 0.2),
-            (x_col, y_tower_back, z_tower_bot + 0.2),
+        pl_lchk = offset_plane(comp, comp.yZConstructionPlane, x_col, adsk.core.Vector3D.create(1, 0, 0))
+        sk_lchk = comp.sketches.add(pl_lchk)
+        sk_lchk.name = f'Lower_Outer_Rod_Cheek_{side_tag}'
+        draw_closed_poly(sk_lchk, [
+            (x_col, y_snap, -11.7),
+            (x_col, -7.5,    -8.0),
+            (x_col, -7.5,    z_belt_lo - 2.5),
+            (x_col, y_snap,  z_belt_lo - 2.5),
         ])
-        extrude_symmetric(comp, sk_lcol, 15.0, adsk.fusion.FeatureOperations.JoinFeatureOperation)
+        extrude_symmetric(comp, sk_lchk, 15.0, adsk.fusion.FeatureOperations.JoinFeatureOperation)
 
-    # 2. Cut 2x LM8UU front-half cylindrical bearing seats
+    # 2. Cut 2x LM8UU front-half cylindrical bearing seats (Y = 0.0, Z = 0 & rs)
     sk_bearings = comp.sketches.add(comp.yZConstructionPlane)
     sk_bearings.name = 'LM8UU_Front_Half_Cradles'
     sk_bearings.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_bearings, 0, 0, 0), mm(lm_od / 2.0))
     sk_bearings.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_bearings, 0, 0, rs), mm(lm_od / 2.0))
     extrude_symmetric(comp, sk_bearings, lm_len, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 2b. Cut upper bearing-cap seating pocket (|x| <= 12.3, Y <= +0.2, Z = 30.8..61.0)
+    # 2b. Cut upper bearing-cap seating pocket (|X| <= 12.3, Y <= +0.2, Z = z_belt_hi + 0.1..z_top + 0.5)
     sk_up_pkt = comp.sketches.add(comp.yZConstructionPlane)
     sk_up_pkt.name = 'Upper_Bearing_Cap_Pocket'
     draw_closed_poly(sk_up_pkt, [
-        (0.0, -24.0, 30.8),
-        (0.0,   0.2, 30.8),
+        (0.0, -24.0, z_belt_hi + 0.1),
+        (0.0,   0.2, z_belt_hi + 0.1),
         (0.0,   0.2, z_top + 0.5),
         (0.0, -24.0, z_top + 0.5),
     ])
     extrude_symmetric(comp, sk_up_pkt, lm_len + 0.2, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
-    # 2c. Cut lower bearing-cap seating pocket (|x| <= 12.3, Y <= +0.2, Z = -16.0..+9.0)
+    # 2c. Cut upper belt-pinch channel across full width (Y = -24.0..+3.8, Z = z_belt_hi - 0.1..z_belt_hi + 2.2)
+    sk_ub_chan = comp.sketches.add(comp.yZConstructionPlane)
+    sk_ub_chan.name = 'Upper_Belt_Pinch_Channel'
+    draw_closed_poly(sk_ub_chan, [
+        (0.0, -24.0, z_belt_hi - 0.1),
+        (0.0,   3.8, z_belt_hi - 0.1),
+        (0.0,   3.8, z_belt_hi + 2.2),
+        (0.0, -24.0, z_belt_hi + 2.2),
+    ])
+    extrude_symmetric(comp, sk_ub_chan, cw + 4.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
+
+    # 2d. Cut lower bearing-cap seating pocket (|X| <= 12.3, Y <= +0.2, Z = z_bot - 0.5..z_belt_lo - 0.1)
     sk_lo_pkt = comp.sketches.add(comp.yZConstructionPlane)
     sk_lo_pkt.name = 'Lower_Bearing_Cap_Pocket'
     draw_closed_poly(sk_lo_pkt, [
         (0.0, -24.0, z_bot - 0.5),
         (0.0,   0.2, z_bot - 0.5),
-        (0.0,   0.2, z_tower_bot),
-        (0.0, -24.0, z_tower_bot),
+        (0.0,   0.2, z_belt_lo - 0.1),
+        (0.0, -24.0, z_belt_lo - 0.1),
     ])
     extrude_symmetric(comp, sk_lo_pkt, lm_len + 0.2, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
-    # 2d. Cut center hook-tab recess for the lower bearing cap (|x| <= 5.7, clears X=+/-8.0 belt screws)
-    sk_tab_pkt = comp.sketches.add(comp.yZConstructionPlane)
-    sk_tab_pkt.name = 'Lower_Bearing_Cap_Center_Tab_Pocket'
-    draw_closed_poly(sk_tab_pkt, [
-        (0.0, -24.0,  8.8),
-        (0.0,   0.2,  8.8),
-        (0.0,   0.2, 10.6),
-        (0.0, -19.5, 10.6),
-        (0.0, -19.5, 16.6),
-        (0.0, -24.0, 16.6),
+    # 2e. Cut lower belt-pinch channel across full width (Y = -24.0..+3.8, Z = z_belt_lo - 2.2..z_belt_lo + 0.1)
+    sk_lb_chan = comp.sketches.add(comp.yZConstructionPlane)
+    sk_lb_chan.name = 'Lower_Belt_Pinch_Channel'
+    draw_closed_poly(sk_lb_chan, [
+        (0.0, -24.0, z_belt_lo - 2.2),
+        (0.0,   3.8, z_belt_lo - 2.2),
+        (0.0,   3.8, z_belt_lo + 0.1),
+        (0.0, -24.0, z_belt_lo + 0.1),
     ])
-    extrude_symmetric(comp, sk_tab_pkt, 11.4, adsk.fusion.FeatureOperations.CutFeatureOperation)
+    extrude_symmetric(comp, sk_lb_chan, cw + 4.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
-    # 2e. M3 self-threading holes in base for Upper Bearing Cap (X=+/-6.5, Z=56.5, Y=0.0..11.5)
-    pl_cap_th = offset_plane(comp, comp.xZConstructionPlane, 5.5, adsk.core.Vector3D.create(0, 1, 0))
+    # 2f. M3 clearance holes in base for Upper Bearing Cap (X=+/-6.5, Z=rs+12.0, Y=-0.5..+12.0 -> feeds nut pocket)
+    pl_cap_th = offset_plane(comp, comp.xZConstructionPlane, 5.75, adsk.core.Vector3D.create(0, 1, 0))
     sk_up_th = comp.sketches.add(pl_cap_th)
-    sk_up_th.name = 'Upper_Bearing_Cap_M3_Thread_Holes'
+    sk_up_th.name = 'Upper_Bearing_Cap_M3_Clearance_Holes'
     for sx_h in (-6.5, 6.5):
-        sk_up_th.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_up_th, sx_h, 5.5, 56.5), mm(CFG['screw_thread_dia'] / 2.0))
-    extrude_symmetric(comp, sk_up_th, 12.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+        sk_up_th.sketchCurves.sketchCircles.addByCenterRadius(
+            wpt(sk_up_th, sx_h, 5.75, lay['z_cap_up_screw']),
+            mm(CFG['screw_hole_dia'] / 2.0),
+        )
+    extrude_symmetric(comp, sk_up_th, 12.5, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 2f. M3 self-threading holes in base for Lower Bearing Cap bottom (X=+/-6.5, Z=-11.5, Y=0.0..11.5)
+    # 2g. M3 clearance holes in base for Lower Bearing Cap bottom (X=+/-6.5, Z=-12.0, Y=-0.5..+12.0 -> feeds nut pocket)
     sk_lo_th = comp.sketches.add(pl_cap_th)
-    sk_lo_th.name = 'Lower_Bearing_Cap_Bottom_M3_Thread_Holes'
+    sk_lo_th.name = 'Lower_Bearing_Cap_Bottom_M3_Clearance_Holes'
     for sx_h in (-6.5, 6.5):
-        sk_lo_th.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_lo_th, sx_h, 5.5, -11.5), mm(CFG['screw_thread_dia'] / 2.0))
-    extrude_symmetric(comp, sk_lo_th, 12.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+        sk_lo_th.sketchCurves.sketchCircles.addByCenterRadius(
+            wpt(sk_lo_th, sx_h, 5.75, lay['z_cap_lo_screw']),
+            mm(CFG['screw_hole_dia'] / 2.0),
+        )
+    extrude_symmetric(comp, sk_lo_th, 12.5, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 2g. M3 self-threading hole in base for Lower Bearing Cap top hook-tab (X=0.0, Z=13.5, Y=-19.5..-13.5)
-    pl_tab_th = offset_plane(comp, comp.xZConstructionPlane, -16.6, adsk.core.Vector3D.create(0, 1, 0))
-    sk_tab_th = comp.sketches.add(pl_tab_th)
-    sk_tab_th.name = 'Lower_Bearing_Cap_Top_Tab_M3_Thread_Hole'
-    sk_tab_th.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_tab_th, 0.0, -16.6, 13.5), mm(CFG['screw_thread_dia'] / 2.0))
-    extrude_symmetric(comp, sk_tab_th, 6.2, adsk.fusion.FeatureOperations.CutFeatureOperation)
-
-    # 3. Cut 8mm smooth rod clearance holes + rear U-slots (for end walls |x| > 12.3)
+    # 3. Cut closed full-circle 8mm smooth rod clearance bores (no U-slots)
     rod_r = CFG['rod_clear_dia'] / 2.0
     sk_rods = comp.sketches.add(comp.yZConstructionPlane)
     sk_rods.name = 'Smooth_Rod_Clearance_Bores'
@@ -250,78 +277,84 @@ def build_carriage_base(root: adsk.fusion.Component) -> None:
     sk_rods.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_rods, 0, 0, rs), mm(rod_r))
     extrude_symmetric(comp, sk_rods, cw + 4.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    sk_uslot = comp.sketches.add(comp.yZConstructionPlane)
-    sk_uslot.name = 'Smooth_Rod_Rear_U_Slots'
-    for z_c in (0.0, rs):
-        draw_closed_poly(sk_uslot, [
-            (0.0, -3.8, z_c - rod_r),
-            (0.0, 0.0, z_c - rod_r),
-            (0.0, 0.0, z_c + rod_r),
-            (0.0, -3.8, z_c + rod_r),
+    # 4. Lower horizontal GT2 toothed belt grooves (aligned at Y = 0.0, 12 teeth per side pointing down into belt)
+    sk_belt_lo = comp.sketches.add(comp.xZConstructionPlane)
+    sk_belt_lo.name = 'GT2_Lower_Horizontal_Toothed_Grooves'
+
+    lo_left_pts = [(-(hw + 0.5), 0.0, z_belt_lo - 0.5), (-3.6, 0.0, z_belt_lo - 0.5), (-3.6, 0.0, z_belt_lo)]
+    for k in range(12):
+        xr = -4.0 - 2.0 * k
+        xl = xr - 1.1
+        lo_left_pts.extend([
+            (xr, 0.0, z_belt_lo),
+            (xr, 0.0, z_belt_lo + 0.75),
+            (xl, 0.0, z_belt_lo + 0.75),
+            (xl, 0.0, z_belt_lo),
         ])
-    extrude_symmetric(comp, sk_uslot, cw + 4.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+    lo_left_pts.append((-(hw + 0.5), 0.0, z_belt_lo))
+    draw_closed_poly(sk_belt_lo, lo_left_pts)
 
-    # 4. Lower horizontal GT2 belt pass-through tunnel
-    y_belt_lo = -13.0
-    y_belt_hi = y_belt_lo + CFG['belt_width']
-    sk_belt_lo = comp.sketches.add(comp.yZConstructionPlane)
-    sk_belt_lo.name = 'GT2_Lower_Horizontal_Tunnel'
-    draw_closed_poly(sk_belt_lo, [
-        (0.0, y_belt_lo, 10.6),
-        (0.0, y_belt_hi, 10.6),
-        (0.0, y_belt_hi, 14.0),
-        (0.0, y_belt_lo, 14.0),
-    ])
-    extrude_symmetric(comp, sk_belt_lo, cw + 4.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
+    lo_right_pts = [(-px, py, pz) for (px, py, pz) in lo_left_pts]
+    draw_closed_poly(sk_belt_lo, lo_right_pts)
+    extrude_symmetric(comp, sk_belt_lo, CFG['belt_width'], adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 5. Upper horizontal GT2 toothed belt grooves
-    y_belt_mid = (y_belt_lo + y_belt_hi) / 2.0
-    pl_belt_y = offset_plane(comp, comp.xZConstructionPlane, y_belt_mid, adsk.core.Vector3D.create(0, 1, 0))
-    sk_belt_hi = comp.sketches.add(pl_belt_y)
+    # 5. Upper horizontal GT2 toothed belt grooves (aligned at Y = 0.0, 12 teeth per side pointing up into belt)
+    sk_belt_hi = comp.sketches.add(comp.xZConstructionPlane)
     sk_belt_hi.name = 'GT2_Upper_Horizontal_Toothed_Grooves'
 
-    left_pts = [(-(hw + 0.5), y_belt_mid, 31.2), (-3.6, y_belt_mid, 31.2), (-3.6, y_belt_mid, 30.35)]
+    left_pts = [(-(hw + 0.5), 0.0, z_belt_hi + 0.5), (-3.6, 0.0, z_belt_hi + 0.5), (-3.6, 0.0, z_belt_hi)]
     for k in range(12):
         xr = -4.0 - 2.0 * k
         xl = xr - 1.1
         left_pts.extend([
-            (xr, y_belt_mid, 30.35),
-            (xr, y_belt_mid, 29.60),
-            (xl, y_belt_mid, 29.60),
-            (xl, y_belt_mid, 30.35),
+            (xr, 0.0, z_belt_hi),
+            (xr, 0.0, z_belt_hi - 0.75),
+            (xl, 0.0, z_belt_hi - 0.75),
+            (xl, 0.0, z_belt_hi),
         ])
-    left_pts.append((-(hw + 0.5), y_belt_mid, 30.35))
+    left_pts.append((-(hw + 0.5), 0.0, z_belt_hi))
     draw_closed_poly(sk_belt_hi, left_pts)
 
     right_pts = [(-px, py, pz) for (px, py, pz) in left_pts]
     draw_closed_poly(sk_belt_hi, right_pts)
     extrude_symmetric(comp, sk_belt_hi, CFG['belt_width'], adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 6. Open center excess-belt exit slot
-    pl_exit = offset_plane(comp, comp.xZConstructionPlane, -15.05, adsk.core.Vector3D.create(0, 1, 0))
+    # 6. Open center excess-belt exit slots for BOTH upper and lower belts (Y = +3.4 out to rear -24.0, |X| <= 3.6)
+    pl_exit = offset_plane(comp, comp.xZConstructionPlane, -10.3, adsk.core.Vector3D.create(0, 1, 0))
     sk_exit = comp.sketches.add(pl_exit)
-    sk_exit.name = 'Excess_Belt_Center_Exit_Slot'
+    sk_exit.name = 'Excess_Belt_Center_Exit_Slots'
     draw_closed_poly(sk_exit, [
-        (-3.6, -15.05, 29.6),
-        (3.6, -15.05, 29.6),
-        (3.6, -15.05, 31.2),
-        (-3.6, -15.05, 31.2),
+        (-3.6, -10.3, z_belt_hi - 0.75),
+        ( 3.6, -10.3, z_belt_hi - 0.75),
+        ( 3.6, -10.3, z_belt_hi + 0.5),
+        (-3.6, -10.3, z_belt_hi + 0.5),
     ])
-    extrude_symmetric(comp, sk_exit, 17.9, adsk.fusion.FeatureOperations.CutFeatureOperation)
+    draw_closed_poly(sk_exit, [
+        (-3.6, -10.3, z_belt_lo - 0.5),
+        ( 3.6, -10.3, z_belt_lo - 0.5),
+        ( 3.6, -10.3, z_belt_lo + 0.75),
+        (-3.6, -10.3, z_belt_lo + 0.75),
+    ])
+    extrude_symmetric(comp, sk_exit, 27.4, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 7. Full open-bottom vertical M3 belt-clamp screw bores (Z = 8.0 to 31.5)
+    # 7. Full through vertical M3 belt-clamp screw bores (Z = z_belt_lo - 0.5 to z_belt_hi + 0.5, serves both clamps)
     bx = CFG['belt_clamp_x']
     by = CFG['belt_clamp_y']
-    pl_sc = offset_plane(comp, comp.xYConstructionPlane, 19.75, adsk.core.Vector3D.create(0, 0, 1))
+    z_sc_lo = z_belt_lo - 0.5
+    z_sc_hi = z_belt_hi + 0.5
+    z_sc_mid = (z_sc_lo + z_sc_hi) / 2.0
+    pl_sc = offset_plane(comp, comp.xYConstructionPlane, z_sc_mid, adsk.core.Vector3D.create(0, 0, 1))
     sk_sc = comp.sketches.add(pl_sc)
     sk_sc.name = 'Belt_Clamp_Full_Through_M3_Bores'
-    sk_sc.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_sc, -bx, by, 19.75), mm(1.8))
-    sk_sc.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_sc, bx, by, 19.75), mm(1.8))
-    extrude_symmetric(comp, sk_sc, 23.5, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+    sk_sc.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_sc, -bx, by, z_sc_mid), mm(1.8))
+    sk_sc.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_sc, bx, by, z_sc_mid), mm(1.8))
+    extrude_symmetric(comp, sk_sc, z_sc_hi - z_sc_lo, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 8. Side-entry flexible captive nut bays
-    z_bay_mid = 22.1
-    z_bay_h = 10.2
+    # 8. Original straight full-height side-entry flexible captive nut bays (Z = z_belt_lo+2.0..z_belt_hi-2.5)
+    z_bay_lo = z_belt_lo + 2.0
+    z_bay_hi = z_belt_hi - 2.5
+    z_bay_mid = (z_bay_lo + z_bay_hi) / 2.0
+    z_bay_h = z_bay_hi - z_bay_lo
     pl_bay = offset_plane(comp, comp.xYConstructionPlane, z_bay_mid, adsk.core.Vector3D.create(0, 0, 1))
     sk_bay = comp.sketches.add(pl_bay)
     sk_bay.name = 'Side_Entry_Flexible_Nut_Bays'
@@ -367,46 +400,166 @@ def build_carriage_base(root: adsk.fusion.Component) -> None:
         ])
     extrude_symmetric(comp, sk_flex, z_bay_h, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 10. Front flat-face 4x M3 mounting holes (Syringe Mount grid: X=+/-16.5, Z=12.5 & 32.5, blind from -Y)
+    # Helpers for MINIMAL captive M3 nut bays (4.1-4.2mm deep along screw axis for locknuts & varying screw lengths)
+    def add_mini_outer_side_nut_bay(name: str, x_hole: float, y_center: float, z_center: float, bay_w: float = 4.2) -> None:
+        """6.0mm tall outer side-entry nut slot (fits standard M3 nuts, washers, or 4mm locknuts)."""
+        hw_bay = bay_w / 2.0
+        hw_pinch = hw_bay - 0.4
+        x_in = x_hole - 3.2
+        pl = offset_plane(comp, comp.xYConstructionPlane, z_center, adsk.core.Vector3D.create(0, 0, 1))
+        sk = comp.sketches.add(pl)
+        sk.name = name
+        left_pts = [
+            (-(hw + 0.2), y_center - hw_bay,   z_center),
+            (-25.0,       y_center - hw_bay,   z_center),
+            (-24.8,       y_center - hw_pinch, z_center),
+            (-24.0,       y_center - hw_pinch, z_center),
+            (-23.8,       y_center - hw_bay,   z_center),
+            (-x_in,       y_center - hw_bay,   z_center),
+            (-x_in,       y_center + hw_bay,   z_center),
+            (-23.8,       y_center + hw_bay,   z_center),
+            (-24.0,       y_center + hw_pinch, z_center),
+            (-24.8,       y_center + hw_pinch, z_center),
+            (-25.0,       y_center + hw_bay,   z_center),
+            (-(hw + 0.2), y_center + hw_bay,   z_center),
+        ]
+        draw_closed_poly(sk, left_pts)
+        draw_closed_poly(sk, [(-px, py, pz) for (px, py, pz) in left_pts])
+        extrude_symmetric(comp, sk, 6.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+
+    def add_mini_inner_pocket_nut_bay(name: str, x_hole: float, y_center: float, z_center: float, bay_w: float = 4.1) -> None:
+        """Short 7.1mm nut slot cut outward from the open bearing-cap pocket (|X|=12.1..19.2)."""
+        hw_bay = bay_w / 2.0
+        hw_pinch = hw_bay - 0.4
+        x_out = x_hole + 3.2
+        pl = offset_plane(comp, comp.xYConstructionPlane, z_center, adsk.core.Vector3D.create(0, 0, 1))
+        sk = comp.sketches.add(pl)
+        sk.name = name
+        left_pts = [
+            (-12.1,  y_center - hw_bay,   z_center),
+            (-12.4,  y_center - hw_bay,   z_center),
+            (-12.5,  y_center - hw_pinch, z_center),
+            (-12.9,  y_center - hw_pinch, z_center),
+            (-13.0,  y_center - hw_bay,   z_center),
+            (-x_out, y_center - hw_bay,   z_center),
+            (-x_out, y_center + hw_bay,   z_center),
+            (-13.0,  y_center + hw_bay,   z_center),
+            (-12.9,  y_center + hw_pinch, z_center),
+            (-12.5,  y_center + hw_pinch, z_center),
+            (-12.4,  y_center + hw_bay,   z_center),
+            (-12.1,  y_center + hw_bay,   z_center),
+        ]
+        draw_closed_poly(sk, left_pts)
+        draw_closed_poly(sk, [(-px, py, pz) for (px, py, pz) in left_pts])
+        extrude_symmetric(comp, sk, 6.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+
+    def add_mini_top_drop_nut_bay(name: str, x_hole: float, y_center: float, z_hole: float, z_open: float, bay_w: float = 4.2) -> None:
+        """Short vertical drop-in nut pocket from an open +Z face/arch."""
+        hw_x = 6.0 / 2.0
+        hw_pinch = 5.2 / 2.0
+        z_bot_bay = z_hole - 3.0
+        z_pinch_lo = z_open - 2.0
+        z_pinch_hi = z_open - 1.0
+        z_top_bay = z_open + 0.2
+        pl = offset_plane(comp, comp.xZConstructionPlane, y_center, adsk.core.Vector3D.create(0, 1, 0))
+        sk = comp.sketches.add(pl)
+        sk.name = name
+        for side in (-1.0, 1.0):
+            cx = side * x_hole
+            draw_closed_poly(sk, [
+                (cx - hw_x,     y_center, z_bot_bay),
+                (cx + hw_x,     y_center, z_bot_bay),
+                (cx + hw_x,     y_center, z_pinch_lo),
+                (cx + hw_pinch, y_center, z_pinch_lo + 0.2),
+                (cx + hw_pinch, y_center, z_pinch_hi - 0.2),
+                (cx + hw_x,     y_center, z_pinch_hi),
+                (cx + hw_x,     y_center, z_top_bay),
+                (cx - hw_x,     y_center, z_top_bay),
+                (cx - hw_x,     y_center, z_pinch_hi),
+                (cx - hw_pinch, y_center, z_pinch_hi - 0.2),
+                (cx - hw_pinch, y_center, z_pinch_lo + 0.2),
+                (cx - hw_x,     y_center, z_pinch_lo),
+            ])
+        extrude_symmetric(comp, sk, bay_w, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+
+    def add_mini_bottom_drop_nut_bay(name: str, x_hole: float, y_center: float, z_hole: float, z_open: float, bay_w: float = 4.2) -> None:
+        """Short vertical drop-in nut pocket from the bottom -Z face."""
+        hw_x = 6.0 / 2.0
+        hw_pinch = 5.2 / 2.0
+        z_top_bay = z_hole + 3.0
+        z_pinch_hi = z_open + 2.0
+        z_pinch_lo = z_open + 1.0
+        z_bot_bay = z_open - 0.2
+        pl = offset_plane(comp, comp.xZConstructionPlane, y_center, adsk.core.Vector3D.create(0, 1, 0))
+        sk = comp.sketches.add(pl)
+        sk.name = name
+        for side in (-1.0, 1.0):
+            cx = side * x_hole
+            draw_closed_poly(sk, [
+                (cx - hw_x,     y_center, z_top_bay),
+                (cx + hw_x,     y_center, z_top_bay),
+                (cx + hw_x,     y_center, z_pinch_hi),
+                (cx + hw_pinch, y_center, z_pinch_hi - 0.2),
+                (cx + hw_pinch, y_center, z_pinch_lo + 0.2),
+                (cx + hw_x,     y_center, z_pinch_lo),
+                (cx + hw_x,     y_center, z_bot_bay),
+                (cx - hw_x,     y_center, z_bot_bay),
+                (cx - hw_x,     y_center, z_pinch_lo),
+                (cx - hw_pinch, y_center, z_pinch_lo + 0.2),
+                (cx - hw_pinch, y_center, z_pinch_hi - 0.2),
+                (cx - hw_x,     y_center, z_pinch_hi),
+            ])
+        extrude_symmetric(comp, sk, bay_w, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+
+    # 9b. Captive M3 nut pockets for Upper & Lower Bearing Cap horizontal clamping screws (X=+/-6.5, Y=+5.4..+9.6)
+    add_mini_top_drop_nut_bay('Upper_Bearing_Cap_Top_Nut_Bays', x_hole=6.5, y_center=7.5, z_hole=lay['z_cap_up_screw'], z_open=z_top, bay_w=4.2)
+    add_mini_bottom_drop_nut_bay('Lower_Bearing_Cap_Bottom_Nut_Bays', x_hole=6.5, y_center=7.5, z_hole=lay['z_cap_lo_screw'], z_open=z_bot, bay_w=4.2)
+
+    # 10. Front flat-face 4x Syringe Mount M3 clearance holes (Y = +4.5..+13.5) + 4.2mm Deep Mini Nut Bays
     mx = CFG['mount_screw_x']
     mz_lo = CFG['mount_screw_z_lo']
     mz_hi = CFG['mount_screw_z_hi']
-    pl_front_m = offset_plane(comp, comp.xZConstructionPlane, 5.4, adsk.core.Vector3D.create(0, 1, 0))
+    pl_front_m = offset_plane(comp, comp.xZConstructionPlane, 9.05, adsk.core.Vector3D.create(0, 1, 0))
     sk_fm = comp.sketches.add(pl_front_m)
     sk_fm.name = 'Front_Flat_Syringe_Mount_M3_Holes'
     for sx_h in (-mx, mx):
         for sz_h in (mz_lo, mz_hi):
-            sk_fm.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_fm, sx_h, 5.4, sz_h), mm(CFG['screw_thread_dia'] / 2.0))
-    extrude_symmetric(comp, sk_fm, 17.4, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+            sk_fm.sketchCurves.sketchCircles.addByCenterRadius(
+                wpt(sk_fm, sx_h, 9.05, sz_h),
+                mm(CFG['screw_hole_dia'] / 2.0),
+            )
+    extrude_symmetric(comp, sk_fm, 9.1, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 10b. Front 4x M3 holes for Stylus Holder (32x32mm: X=+/-16.0, Z=6.5 & 38.5)
-    st_off = CFG['stylus_hole_offset']
-    st_zc = CFG['stylus_center_z']
-    sk_st = comp.sketches.add(pl_front_m)
-    sk_st.name = 'Front_Stylus_Holder_32x32_M3_Holes'
-    for sx_h in (-st_off, st_off):
-        for sz_h in (st_zc - st_off, st_zc + st_off):
-            sk_st.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_st, sx_h, 5.4, sz_h), mm(CFG['screw_thread_dia'] / 2.0))
-    extrude_symmetric(comp, sk_st, 17.4, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+    for sz_h in (mz_lo, mz_hi):
+        add_mini_outer_side_nut_bay(f'Front_Syringe_Mini_Nut_Bay_Z{sz_h}', x_hole=mx, y_center=7.5, z_center=sz_h, bay_w=4.2)
 
-    # 11. Rear/bottom flat-face 4x M3 mounting holes (32.0mm x 32.0mm grid at X=+/-16.0, Z=6.5 & 38.5)
+    # 11. Coaxial Front + Rear 32x32mm M3 clearance through-holes + Minimal Closest-Side Nut Bays
     rx = CFG['rear_mount_x']
-    rz_lo = CFG['rear_mount_z_lo']
-    rz_hi = CFG['rear_mount_z_hi']
-    pl_rear_m = offset_plane(comp, comp.xZConstructionPlane, -13.5, adsk.core.Vector3D.create(0, 1, 0))
-    sk_rm = comp.sketches.add(pl_rear_m)
-    sk_rm.name = 'Rear_Flat_Accessory_32x32_M3_Holes'
+    pl_thru = offset_plane(comp, comp.xZConstructionPlane, -5.0, adsk.core.Vector3D.create(0, 1, 0))
+    sk_rm = comp.sketches.add(pl_thru)
+    sk_rm.name = 'Front_Rear_Coaxial_32x32_M3_Through_Holes'
     for sx_h in (-rx, rx):
-        for sz_h in (rz_lo, rz_hi):
-            sk_rm.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_rm, sx_h, -13.5, sz_h), mm(CFG['screw_thread_dia'] / 2.0))
-    extrude_symmetric(comp, sk_rm, 22.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+        for sz_h in (lay['z_grid_lo'], lay['z_grid_hi']):
+            sk_rm.sketchCurves.sketchCircles.addByCenterRadius(
+                wpt(sk_rm, sx_h, -5.0, sz_h),
+                mm(CFG['screw_hole_dia'] / 2.0),
+            )
+    extrude_symmetric(comp, sk_rm, 38.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 12. Distance Sensor Holder: Nozzle-aligned Y=22.66, compact X=32.5, flush Z=-15.5..+2.5, front-accessible screw
-    sx = CFG['sensor_x'] + (CFG['sensor_dia'] - 8.0) / 2.0
+    # Lower 32x32 (Z=z_grid_lo): Front uses slim outer side cut; Rear drops straight down from open arch above belt tower
+    add_mini_outer_side_nut_bay(f'Front_32x32_Mini_Nut_Bay_Z{lay["z_grid_lo"]}', x_hole=rx, y_center=7.5, z_center=lay['z_grid_lo'], bay_w=4.2)
+    add_mini_top_drop_nut_bay(f'Rear_32x32_Mini_Arch_Nut_Bay_Z{lay["z_grid_lo"]}', x_hole=rx, y_center=-19.45, z_hole=lay['z_grid_lo'], z_open=z_belt_hi, bay_w=4.1)
+
+    # Upper 32x32 (Z=z_grid_hi): Front drops straight down from top face; Rear cuts outward from open inner cap pocket
+    add_mini_top_drop_nut_bay(f'Front_32x32_Mini_Top_Nut_Bay_Z{lay["z_grid_hi"]}', x_hole=rx, y_center=7.5, z_hole=lay['z_grid_hi'], z_open=z_top, bay_w=4.2)
+    add_mini_inner_pocket_nut_bay(f'Rear_32x32_Mini_Inner_Nut_Bay_Z{lay["z_grid_hi"]}', x_hole=rx, y_center=-19.45, z_center=lay['z_grid_hi'], bay_w=4.1)
+
+    # 12. Distance Sensor Holder (CHE12-4NA-A710, 12.0mm): Nozzle-aligned Y=22.66, X=34.5, Z=-16.5..+1.5
+    sx = CFG['sensor_x']
     sy = CFG['sensor_y']
     z_sens_mid = CFG['sensor_z_mid']
     sens_h = CFG['sensor_h']
-    sr_in = (CFG['sensor_dia'] + 0.1) / 2.0
+    sr_in = (CFG['sensor_dia'] + 0.2) / 2.0
     sr_out = sr_in + 4.0
     pl_sens = offset_plane(comp, comp.xYConstructionPlane, z_sens_mid, adsk.core.Vector3D.create(0, 0, 1))
 
@@ -449,10 +602,10 @@ def build_carriage_base(root: adsk.fusion.Component) -> None:
     sk_sslit = comp.sketches.add(pl_sens)
     sk_sslit.name = 'Distance_Sensor_Flex_Slit'
     draw_closed_poly(sk_sslit, [
-        (sx,               sy - 0.9, z_sens_mid),
-        (ear_x_end + 0.8,  sy - 0.9, z_sens_mid),
-        (ear_x_end + 0.8,  sy + 0.9, z_sens_mid),
-        (sx,               sy + 0.9, z_sens_mid),
+        (sx,              sy - 0.9, z_sens_mid),
+        (ear_x_end + 0.8, sy - 0.9, z_sens_mid),
+        (ear_x_end + 0.8, sy + 0.9, z_sens_mid),
+        (sx,              sy + 0.9, z_sens_mid),
     ])
     extrude_symmetric(comp, sk_sslit, sens_h + 4.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
@@ -486,177 +639,228 @@ def build_carriage_base(root: adsk.fusion.Component) -> None:
 
 
 def build_upper_belt_bearing_clamp(root: adsk.fusion.Component) -> None:
-    """Component 2: Unified GT2 Belt Clamp + Upper LM8UU Linear Bearing Rear Cap (24.2mm wide)."""
+    """Component 2: Unified GT2 Belt Clamp + Upper LM8UU Linear Bearing Rear Cap (Y=0 aligned)."""
     occ = root.occurrences.addNewComponent(adsk.core.Matrix3D.create())
     occ.activate()
     comp = occ.component
     comp.name = 'PnP_Upper_Belt_Bearing_Clamp'
 
-    cap_w = CFG['lm8uu_len'] - 0.2   # 24.2mm (X = -12.1..+12.1, 0.4mm clearance to columns)
-    rs = CFG['rod_spacing']
+    lay = derive_layout()
+    rs = lay['rs']
+    z_top = lay['z_top'] - 0.2
+    z_bh = lay['z_belt_hi']
+    cap_w = CFG['lm8uu_len'] - 0.2   # 24.2mm (X = -12.1..+12.1)
     bx = CFG['belt_clamp_x']
     by = CFG['belt_clamp_y']
 
-    # 1. Combined belt-clamp bridge + upper LM8UU bearing cap body
+    # 1. Bearing cap core + rear vertical-screw flange (24.2mm wide)
     sk_body = comp.sketches.add(comp.yZConstructionPlane)
-    sk_body.name = 'Upper_Belt_And_Bearing_Clamp_Profile'
+    sk_body.name = 'Upper_Bearing_And_Belt_Clamp_Profile'
     draw_closed_poly(sk_body, [
-        (0.0, -23.5, 30.8),
-        (0.0, -13.5, 30.8),
-        (0.0, -13.5, 31.2),
-        (0.0, -12.6, 31.2),
-        (0.0, -12.6, 30.6),
-        (0.0,  -6.4, 30.6),
-        (0.0,  -6.4, 31.2),
-        (0.0,  -5.8, 31.2),
-        (0.0,  -5.8, 30.8),
-        (0.0,  -3.8, 30.8),
-        (0.0,  -3.8, 32.0),
-        (0.0,   0.0, 32.0),
-        (0.0,   0.0, 60.3),
-        (0.0, -10.5, 60.3),
-        (0.0, -10.5, 36.4),
-        (0.0, -23.5, 36.4),
+        (0.0, -18.5, z_bh + 0.5),
+        (0.0,  -3.8, z_bh + 0.5),
+        (0.0,  -3.8, z_bh + 2.0),
+        (0.0,   0.0, z_bh + 2.0),
+        (0.0,   0.0, z_top),
+        (0.0, -10.5, z_top),
+        (0.0, -10.5, z_bh + 6.5),
+        (0.0, -18.5, z_bh + 6.5),
     ])
     extrude_symmetric(comp, sk_body, cap_w, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
 
+    # 1b. Forward belt-pinch bridge + outer pinch wings (44.0mm wide: X=-22.0..+22.0, Y=-10.5..+3.4)
+    sk_wing = comp.sketches.add(comp.yZConstructionPlane)
+    sk_wing.name = 'Upper_Belt_Pinch_Wings'
+    draw_closed_poly(sk_wing, [
+        (0.0, -10.5, z_bh + 0.5),
+        (0.0,  -3.4, z_bh + 0.5),
+        (0.0,  -3.4, z_bh + 0.3),
+        (0.0,   3.4, z_bh + 0.3),
+        (0.0,   3.4, z_bh + 2.0),
+        (0.0, -10.5, z_bh + 2.0),
+    ])
+    extrude_symmetric(comp, sk_wing, 44.0, adsk.fusion.FeatureOperations.JoinFeatureOperation)
+
     # 2. Cut center excess-belt exit relief under the bridge (X = -3.7..+3.7)
-    pl_rel = offset_plane(comp, comp.yZConstructionPlane, 0.0, adsk.core.Vector3D.create(1, 0, 0))
-    sk_rel = comp.sketches.add(pl_rel)
+    sk_rel = comp.sketches.add(comp.yZConstructionPlane)
     sk_rel.name = 'Center_Excess_Belt_Exit_Relief'
     draw_closed_poly(sk_rel, [
-        (0.0, -24.0, 30.2),
-        (0.0,  -5.8, 30.2),
-        (0.0,  -5.8, 31.6),
-        (0.0, -24.0, 31.6),
+        (0.0, -19.0, z_bh - 0.2),
+        (0.0,  -3.4, z_bh - 0.2),
+        (0.0,  -3.4, z_bh + 1.1),
+        (0.0, -19.0, z_bh + 1.1),
     ])
     extrude_symmetric(comp, sk_rel, 7.4, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
-    # 3. Cut 2x vertical M3 belt-clamp holes + top counterbores (X = +/-8.0, Y = -16.7)
-    pl_hole = offset_plane(comp, comp.xYConstructionPlane, 33.6, adsk.core.Vector3D.create(0, 0, 1))
+    # 3. Cut 2x vertical M3 belt-clamp holes + top counterbores (X = +/-8.0, Y = -13.8)
+    z_hole_mid = z_bh + 3.5
+    pl_hole = offset_plane(comp, comp.xYConstructionPlane, z_hole_mid, adsk.core.Vector3D.create(0, 0, 1))
     sk_hole = comp.sketches.add(pl_hole)
     sk_hole.name = 'Belt_Clamp_M3_Vertical_Holes'
     for sx_h in (-bx, bx):
-        sk_hole.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_hole, sx_h, by, 33.6), mm(1.8))
+        sk_hole.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_hole, sx_h, by, z_hole_mid), mm(1.8))
     extrude_symmetric(comp, sk_hole, 8.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    pl_cb = offset_plane(comp, comp.xYConstructionPlane, 35.05, adsk.core.Vector3D.create(0, 0, 1))
+    z_cb_mid = z_bh + 5.2
+    pl_cb = offset_plane(comp, comp.xYConstructionPlane, z_cb_mid, adsk.core.Vector3D.create(0, 0, 1))
     sk_cb = comp.sketches.add(pl_cb)
     sk_cb.name = 'Belt_Clamp_M3_Top_Counterbores'
     for sx_h in (-bx, bx):
-        sk_cb.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_cb, sx_h, by, 35.05), mm(CFG['screw_head_dia'] / 2.0))
-    extrude_symmetric(comp, sk_cb, 3.7, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+        sk_cb.sketchCurves.sketchCircles.addByCenterRadius(
+            wpt(sk_cb, sx_h, by, z_cb_mid),
+            mm(CFG['screw_head_dia'] / 2.0),
+        )
+    extrude_symmetric(comp, sk_cb, 3.6, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    # 4. Cut Upper LM8UU semicircular rear bearing seat (centered at Y=0.0, Z=45.0)
+    # 4. Cut Upper LM8UU semicircular rear bearing seat (centered at Y=0.0, Z=rs)
     sk_bore = comp.sketches.add(comp.yZConstructionPlane)
     sk_bore.name = 'Upper_LM8UU_Rear_Half_Bore'
     sk_bore.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_bore, 0.0, 0.0, rs), mm(CFG['lm8uu_od'] / 2.0))
     extrude_symmetric(comp, sk_bore, cap_w + 1.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
-    # 5. Cut 2x horizontal M3 clamping holes + counterbores above the bearing (X=+/-6.5, Z=56.5, M3x16)
+    # 5. Cut 2x horizontal M3 clamping holes + counterbores above the bearing (X=+/-6.5, Z=rs+12.0, M3x16)
     pl_mh = offset_plane(comp, comp.xZConstructionPlane, -5.25, adsk.core.Vector3D.create(0, 1, 0))
     sk_mh = comp.sketches.add(pl_mh)
     sk_mh.name = 'Upper_Bearing_Clamp_M3_Holes'
     for sx_h in (-6.5, 6.5):
-        sk_mh.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_mh, sx_h, -5.25, 56.5), mm(CFG['screw_hole_dia'] / 2.0))
+        sk_mh.sketchCurves.sketchCircles.addByCenterRadius(
+            wpt(sk_mh, sx_h, -5.25, lay['z_cap_up_screw']),
+            mm(CFG['screw_hole_dia'] / 2.0),
+        )
     extrude_symmetric(comp, sk_mh, 12.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
     pl_mcb = offset_plane(comp, comp.xZConstructionPlane, -8.5, adsk.core.Vector3D.create(0, 1, 0))
     sk_mcb = comp.sketches.add(pl_mcb)
     sk_mcb.name = 'Upper_Bearing_Clamp_M3_Counterbores'
     for sx_h in (-6.5, 6.5):
-        sk_mcb.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_mcb, sx_h, -8.5, 56.5), mm(CFG['screw_head_dia'] / 2.0))
+        sk_mcb.sketchCurves.sketchCircles.addByCenterRadius(
+            wpt(sk_mcb, sx_h, -8.5, lay['z_cap_up_screw']),
+            mm(CFG['screw_head_dia'] / 2.0),
+        )
     extrude_symmetric(comp, sk_mcb, 4.4, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
 
 def build_lower_bearing_clamp(root: adsk.fusion.Component) -> None:
-    """Component 3: Lower LM8UU Linear Bearing Rear Cap (24.2mm wide + center hook-tab under lower belt)."""
+    """Component 3: Unified Lower GT2 Belt Clamp + Lower LM8UU Linear Bearing Rear Cap (symmetric mirror of Upper)."""
     occ = root.occurrences.addNewComponent(adsk.core.Matrix3D.create())
     occ.activate()
     comp = occ.component
     comp.name = 'PnP_Lower_Bearing_Clamp'
 
+    lay = derive_layout()
+    z_bot = lay['z_bot'] + 0.2
+    z_bl = lay['z_belt_lo']
     cap_w = CFG['lm8uu_len'] - 0.2   # 24.2mm (X = -12.1..+12.1)
+    bx = CFG['belt_clamp_x']
+    by = CFG['belt_clamp_y']
 
-    # 1. Main lower bearing cap body (Z = -15.3..+8.8, Y = -10.5..0.0)
+    # 1. Bearing cap core + rear vertical-screw flange (24.2mm wide)
     sk_body = comp.sketches.add(comp.yZConstructionPlane)
-    sk_body.name = 'Lower_Bearing_Clamp_Profile'
+    sk_body.name = 'Lower_Bearing_And_Belt_Clamp_Profile'
     draw_closed_poly(sk_body, [
-        (0.0, -10.5, -15.3),
-        (0.0,   0.0, -15.3),
-        (0.0,   0.0,   8.8),
-        (0.0, -10.5,   8.8),
+        (0.0, -18.5, z_bl - 0.5),
+        (0.0,  -3.8, z_bl - 0.5),
+        (0.0,  -3.8, z_bl - 2.0),
+        (0.0,   0.0, z_bl - 2.0),
+        (0.0,   0.0, z_bot),
+        (0.0, -10.5, z_bot),
+        (0.0, -10.5, z_bl - 6.5),
+        (0.0, -18.5, z_bl - 6.5),
     ])
     extrude_symmetric(comp, sk_body, cap_w, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
 
-    # 2. Center rear hook-tab (11.0mm wide, passes under Z=10.6..14.0 belt tunnel, mounts at Z=13.5)
-    sk_tab = comp.sketches.add(comp.yZConstructionPlane)
-    sk_tab.name = 'Lower_Bearing_Clamp_Rear_Hook_Tab'
-    draw_closed_poly(sk_tab, [
-        (0.0, -23.5,  7.5),
-        (0.0,   0.0,  7.5),
-        (0.0,   0.0, 10.4),
-        (0.0, -19.7, 10.4),
-        (0.0, -19.7, 16.4),
-        (0.0, -23.5, 16.4),
+    # 1b. Forward belt-pinch bridge + outer pinch wings (44.0mm wide: X=-22.0..+22.0, Y=-10.5..+3.4)
+    sk_wing = comp.sketches.add(comp.yZConstructionPlane)
+    sk_wing.name = 'Lower_Belt_Pinch_Wings'
+    draw_closed_poly(sk_wing, [
+        (0.0, -10.5, z_bl - 0.5),
+        (0.0,  -3.4, z_bl - 0.5),
+        (0.0,  -3.4, z_bl - 0.3),
+        (0.0,   3.4, z_bl - 0.3),
+        (0.0,   3.4, z_bl - 2.0),
+        (0.0, -10.5, z_bl - 2.0),
     ])
-    extrude_symmetric(comp, sk_tab, 11.0, adsk.fusion.FeatureOperations.JoinFeatureOperation)
+    extrude_symmetric(comp, sk_wing, 44.0, adsk.fusion.FeatureOperations.JoinFeatureOperation)
 
-    # 3. Cut Lower LM8UU semicircular rear bearing seat (centered at Y=0.0, Z=0.0)
+    # 2. Cut center excess-belt exit relief above the bridge (X = -3.7..+3.7)
+    sk_rel = comp.sketches.add(comp.yZConstructionPlane)
+    sk_rel.name = 'Lower_Center_Excess_Belt_Exit_Relief'
+    draw_closed_poly(sk_rel, [
+        (0.0, -19.0, z_bl + 0.2),
+        (0.0,  -3.4, z_bl + 0.2),
+        (0.0,  -3.4, z_bl - 1.1),
+        (0.0, -19.0, z_bl - 1.1),
+    ])
+    extrude_symmetric(comp, sk_rel, 7.4, adsk.fusion.FeatureOperations.CutFeatureOperation)
+
+    # 3. Cut 2x vertical M3 belt-clamp holes + bottom counterbores (X = +/-8.0, Y = -13.8)
+    z_hole_mid = z_bl - 3.5
+    pl_hole = offset_plane(comp, comp.xYConstructionPlane, z_hole_mid, adsk.core.Vector3D.create(0, 0, 1))
+    sk_hole = comp.sketches.add(pl_hole)
+    sk_hole.name = 'Lower_Belt_Clamp_M3_Vertical_Holes'
+    for sx_h in (-bx, bx):
+        sk_hole.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_hole, sx_h, by, z_hole_mid), mm(1.8))
+    extrude_symmetric(comp, sk_hole, 8.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+
+    z_cb_mid = z_bl - 5.2
+    pl_cb = offset_plane(comp, comp.xYConstructionPlane, z_cb_mid, adsk.core.Vector3D.create(0, 0, 1))
+    sk_cb = comp.sketches.add(pl_cb)
+    sk_cb.name = 'Lower_Belt_Clamp_M3_Bottom_Counterbores'
+    for sx_h in (-bx, bx):
+        sk_cb.sketchCurves.sketchCircles.addByCenterRadius(
+            wpt(sk_cb, sx_h, by, z_cb_mid),
+            mm(CFG['screw_head_dia'] / 2.0),
+        )
+    extrude_symmetric(comp, sk_cb, 3.6, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
+
+    # 4. Cut Lower LM8UU semicircular rear bearing seat (centered at Y=0.0, Z=0.0)
     sk_bore = comp.sketches.add(comp.yZConstructionPlane)
     sk_bore.name = 'Lower_LM8UU_Rear_Half_Bore'
     sk_bore.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_bore, 0.0, 0.0, 0.0), mm(CFG['lm8uu_od'] / 2.0))
     extrude_symmetric(comp, sk_bore, cap_w + 1.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
-    # 4. Cut 2x bottom horizontal M3 clamping holes + counterbores (X=+/-6.5, Z=-11.5, M3x16)
+    # 5. Cut 2x bottom horizontal M3 clamping holes + counterbores (X=+/-6.5, Z=-12.0, M3x16)
     pl_mh = offset_plane(comp, comp.xZConstructionPlane, -5.25, adsk.core.Vector3D.create(0, 1, 0))
     sk_mh = comp.sketches.add(pl_mh)
     sk_mh.name = 'Lower_Bearing_Clamp_Bottom_M3_Holes'
     for sx_h in (-6.5, 6.5):
-        sk_mh.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_mh, sx_h, -5.25, -11.5), mm(CFG['screw_hole_dia'] / 2.0))
+        sk_mh.sketchCurves.sketchCircles.addByCenterRadius(
+            wpt(sk_mh, sx_h, -5.25, lay['z_cap_lo_screw']),
+            mm(CFG['screw_hole_dia'] / 2.0),
+        )
     extrude_symmetric(comp, sk_mh, 12.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
     pl_mcb = offset_plane(comp, comp.xZConstructionPlane, -8.5, adsk.core.Vector3D.create(0, 1, 0))
     sk_mcb = comp.sketches.add(pl_mcb)
     sk_mcb.name = 'Lower_Bearing_Clamp_Bottom_M3_Counterbores'
     for sx_h in (-6.5, 6.5):
-        sk_mcb.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_mcb, sx_h, -8.5, -11.5), mm(CFG['screw_head_dia'] / 2.0))
+        sk_mcb.sketchCurves.sketchCircles.addByCenterRadius(
+            wpt(sk_mcb, sx_h, -8.5, lay['z_cap_lo_screw']),
+            mm(CFG['screw_head_dia'] / 2.0),
+        )
     extrude_symmetric(comp, sk_mcb, 4.4, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
-
-    # 5. Cut 1x top-tab horizontal M3 hole + shallow counterbore (X=0.0, Z=13.5, M3x8)
-    pl_th = offset_plane(comp, comp.xZConstructionPlane, -21.6, adsk.core.Vector3D.create(0, 1, 0))
-    sk_th = comp.sketches.add(pl_th)
-    sk_th.name = 'Lower_Bearing_Clamp_Top_Tab_M3_Hole'
-    sk_th.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_th, 0.0, -21.6, 13.5), mm(CFG['screw_hole_dia'] / 2.0))
-    extrude_symmetric(comp, sk_th, 5.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
-
-    pl_tcb = offset_plane(comp, comp.xZConstructionPlane, -22.75, adsk.core.Vector3D.create(0, 1, 0))
-    sk_tcb = comp.sketches.add(pl_tcb)
-    sk_tcb.name = 'Lower_Bearing_Clamp_Top_Tab_M3_Counterbore'
-    sk_tcb.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_tcb, 0.0, -22.75, 13.5), mm(CFG['screw_head_dia'] / 2.0))
-    extrude_symmetric(comp, sk_tcb, 2.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
 
 def build_universal_flex_syringe_mount(root: adsk.fusion.Component) -> None:
-    """Component 4: Flat-back screw-mounted syringe holder (holes at X=+/-16.5, Z=12.5 & 32.5)."""
+    """Component 4: Flat-back screw-mounted syringe holder (holes at X=+/-16.5, Z=6.5 & 26.5)."""
     occ = root.occurrences.addNewComponent(adsk.core.Matrix3D.create())
     occ.activate()
     comp = occ.component
     comp.name = 'PnP_Universal_Flex_Syringe_Mount'
 
-    pl_mid = offset_plane(comp, comp.xYConstructionPlane, 23.5, adsk.core.Vector3D.create(0, 0, 1))
+    pl_mid = offset_plane(comp, comp.xYConstructionPlane, 20.0, adsk.core.Vector3D.create(0, 0, 1))
     sk_body = comp.sketches.add(pl_mid)
     sk_body.name = 'Flat_Base_And_VCradle_Body'
     draw_closed_poly(sk_body, [
-        (-22.0, 13.5, 23.5),
-        (22.0, 13.5, 23.5),
-        (22.0, 21.5, 23.5),
-        (8.0, 21.5, 23.5),
-        (0.0, 17.0, 23.5),
-        (-8.0, 21.5, 23.5),
-        (-22.0, 21.5, 23.5),
+        (-22.0, 13.5, 20.0),
+        ( 22.0, 13.5, 20.0),
+        ( 22.0, 21.5, 20.0),
+        (  8.0, 21.5, 20.0),
+        (  0.0, 17.0, 20.0),
+        ( -8.0, 21.5, 20.0),
+        (-22.0, 21.5, 20.0),
     ])
-    extrude_symmetric(comp, sk_body, 55.0, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    extrude_symmetric(comp, sk_body, 50.0, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
 
     mx = CFG['mount_screw_x']
     mz_lo = CFG['mount_screw_z_lo']
@@ -667,7 +871,10 @@ def build_universal_flex_syringe_mount(root: adsk.fusion.Component) -> None:
     sk_holes.name = 'Syringe_Mount_M3_Holes'
     for sx_h in (-mx, mx):
         for sz_h in (mz_lo, mz_hi):
-            sk_holes.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_holes, sx_h, 17.5, sz_h), mm(CFG['screw_hole_dia'] / 2.0))
+            sk_holes.sketchCurves.sketchCircles.addByCenterRadius(
+                wpt(sk_holes, sx_h, 17.5, sz_h),
+                mm(CFG['screw_hole_dia'] / 2.0),
+            )
     extrude_symmetric(comp, sk_holes, 10.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
     pl_cb = offset_plane(comp, comp.xZConstructionPlane, 19.8, adsk.core.Vector3D.create(0, 1, 0))
@@ -675,10 +882,13 @@ def build_universal_flex_syringe_mount(root: adsk.fusion.Component) -> None:
     sk_cb.name = 'Syringe_Mount_M3_Counterbores'
     for sx_h in (-mx, mx):
         for sz_h in (mz_lo, mz_hi):
-            sk_cb.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_cb, sx_h, 19.8, sz_h), mm(CFG['screw_head_dia'] / 2.0))
+            sk_cb.sketchCurves.sketchCircles.addByCenterRadius(
+                wpt(sk_cb, sx_h, 19.8, sz_h),
+                mm(CFG['screw_head_dia'] / 2.0),
+            )
     extrude_symmetric(comp, sk_cb, 3.8, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
-    for tag, z_jaw in (('Lower', 18.0), ('Upper', 38.0)):
+    for tag, z_jaw in (('Lower', 14.0), ('Upper', 34.0)):
         pl_jaw = offset_plane(comp, comp.xYConstructionPlane, z_jaw, adsk.core.Vector3D.create(0, 0, 1))
         sk_jaw = comp.sketches.add(pl_jaw)
         sk_jaw.name = f'Compliant_Syringe_Jaws_{tag}'
@@ -689,12 +899,12 @@ def build_universal_flex_syringe_mount(root: adsk.fusion.Component) -> None:
             (-23.5, 15.5, z_jaw),
             (-23.5, 29.0, z_jaw),
             (-15.5, 30.3, z_jaw),
-            (-8.8, 26.5, z_jaw),
-            (-5.2, 24.3, z_jaw),
-            (-4.0, 27.0, z_jaw),
-            (-4.6, 31.7, z_jaw),
-            (-7.2, 38.5, z_jaw),
-            (-9.5, 40.0, z_jaw),
+            ( -8.8, 26.5, z_jaw),
+            ( -5.2, 24.3, z_jaw),
+            ( -4.0, 27.0, z_jaw),
+            ( -4.6, 31.7, z_jaw),
+            ( -7.2, 38.5, z_jaw),
+            ( -9.5, 40.0, z_jaw),
             (-16.0, 35.0, z_jaw),
             (-26.3, 31.3, z_jaw),
             (-26.3, 13.5, z_jaw),
@@ -717,41 +927,41 @@ def build_universal_flex_syringe_mount(root: adsk.fusion.Component) -> None:
 
     hose_x = 26.5
     hose_y = 17.5
-    pl_hose = offset_plane(comp, comp.xYConstructionPlane, 48.25, adsk.core.Vector3D.create(0, 0, 1))
+    pl_hose = offset_plane(comp, comp.xYConstructionPlane, 42.25, adsk.core.Vector3D.create(0, 0, 1))
 
     sk_hose_bridge = comp.sketches.add(pl_hose)
     sk_hose_bridge.name = 'Vacuum_Hose_Clip_Bridge'
     draw_closed_poly(sk_hose_bridge, [
-        (21.5, 13.5, 48.25),
-        (hose_x, 13.5, 48.25),
-        (hose_x, 21.5, 48.25),
-        (21.5, 21.5, 48.25),
+        (21.5, 13.5, 42.25),
+        (hose_x, 13.5, 42.25),
+        (hose_x, 21.5, 42.25),
+        (21.5, 21.5, 42.25),
     ])
     extrude_symmetric(comp, sk_hose_bridge, 5.5, adsk.fusion.FeatureOperations.JoinFeatureOperation)
 
     sk_hose_b = comp.sketches.add(pl_hose)
     sk_hose_b.name = 'Vacuum_Hose_Clip_Boss'
-    sk_hose_b.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_hose_b, hose_x, hose_y, 48.25), mm(5.6))
+    sk_hose_b.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_hose_b, hose_x, hose_y, 42.25), mm(5.6))
     extrude_symmetric(comp, sk_hose_b, 5.5, adsk.fusion.FeatureOperations.JoinFeatureOperation)
 
     sk_hose_c = comp.sketches.add(pl_hose)
     sk_hose_c.name = 'Vacuum_Hose_Clip_Bore'
-    sk_hose_c.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_hose_c, hose_x, hose_y, 48.25), mm(3.1))
+    sk_hose_c.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_hose_c, hose_x, hose_y, 42.25), mm(3.1))
     extrude_symmetric(comp, sk_hose_c, 8.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
     sk_hose_s = comp.sketches.add(pl_hose)
     sk_hose_s.name = 'Vacuum_Hose_Clip_Open_Slot'
     draw_closed_poly(sk_hose_s, [
-        (hose_x - 2.1, hose_y, 48.25),
-        (hose_x + 2.1, hose_y, 48.25),
-        (hose_x + 2.1, hose_y + 7.0, 48.25),
-        (hose_x - 2.1, hose_y + 7.0, 48.25),
+        (hose_x - 2.1, hose_y, 42.25),
+        (hose_x + 2.1, hose_y, 42.25),
+        (hose_x + 2.1, hose_y + 7.0, 42.25),
+        (hose_x - 2.1, hose_y + 7.0, 42.25),
     ])
     extrude_symmetric(comp, sk_hose_s, 8.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
 
 def build_sized_syringe_mount(root: adsk.fusion.Component) -> None:
-    """Component 5: Flat-back screw-mounted snap cradle (holes at X=+/-16.5, Z=12.5 & 32.5, placed at X=+95mm)."""
+    """Component 5: Flat-back screw-mounted snap cradle (holes at X=+/-16.5, Z=6.5 & 26.5, placed at X=+95mm)."""
     mat = adsk.core.Matrix3D.create()
     mat.translation = adsk.core.Vector3D.create(mm(95.0), 0.0, 0.0)
     occ = root.occurrences.addNewComponent(mat)
@@ -763,16 +973,16 @@ def build_sized_syringe_mount(root: adsk.fusion.Component) -> None:
     r_out = r_in + 4.0
     y_cyl = 20.0 + r_in
 
-    pl_mid = offset_plane(comp, comp.xYConstructionPlane, 23.5, adsk.core.Vector3D.create(0, 0, 1))
+    pl_mid = offset_plane(comp, comp.xYConstructionPlane, 20.0, adsk.core.Vector3D.create(0, 0, 1))
     sk_base = comp.sketches.add(pl_mid)
     sk_base.name = 'Flat_Mounting_Plate'
     draw_closed_poly(sk_base, [
-        (-22.0, 13.5, 23.5),
-        (22.0, 13.5, 23.5),
-        (22.0, 21.0, 23.5),
-        (-22.0, 21.0, 23.5),
+        (-22.0, 13.5, 20.0),
+        ( 22.0, 13.5, 20.0),
+        ( 22.0, 21.0, 20.0),
+        (-22.0, 21.0, 20.0),
     ])
-    extrude_symmetric(comp, sk_base, 55.0, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    extrude_symmetric(comp, sk_base, 50.0, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
 
     mx = CFG['mount_screw_x']
     mz_lo = CFG['mount_screw_z_lo']
@@ -783,7 +993,10 @@ def build_sized_syringe_mount(root: adsk.fusion.Component) -> None:
     sk_holes.name = 'Syringe_Mount_M3_Holes'
     for sx_h in (-mx, mx):
         for sz_h in (mz_lo, mz_hi):
-            sk_holes.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_holes, sx_h, 17.25, sz_h), mm(CFG['screw_hole_dia'] / 2.0))
+            sk_holes.sketchCurves.sketchCircles.addByCenterRadius(
+                wpt(sk_holes, sx_h, 17.25, sz_h),
+                mm(CFG['screw_hole_dia'] / 2.0),
+            )
     extrude_symmetric(comp, sk_holes, 10.0, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
     pl_cb = offset_plane(comp, comp.xZConstructionPlane, 19.5, adsk.core.Vector3D.create(0, 1, 0))
@@ -791,30 +1004,33 @@ def build_sized_syringe_mount(root: adsk.fusion.Component) -> None:
     sk_cb.name = 'Syringe_Mount_M3_Counterbores'
     for sx_h in (-mx, mx):
         for sz_h in (mz_lo, mz_hi):
-            sk_cb.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_cb, sx_h, 19.5, sz_h), mm(CFG['screw_head_dia'] / 2.0))
+            sk_cb.sketchCurves.sketchCircles.addByCenterRadius(
+                wpt(sk_cb, sx_h, 19.5, sz_h),
+                mm(CFG['screw_head_dia'] / 2.0),
+            )
     extrude_symmetric(comp, sk_cb, 3.6, adsk.fusion.FeatureOperations.CutFeatureOperation, all_profiles=True)
 
     sk_cyl = comp.sketches.add(pl_mid)
     sk_cyl.name = 'Syringe_Cradle_Boss'
-    sk_cyl.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_cyl, 0.0, y_cyl, 23.5), mm(r_out))
-    extrude_symmetric(comp, sk_cyl, 48.0, adsk.fusion.FeatureOperations.JoinFeatureOperation)
+    sk_cyl.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_cyl, 0.0, y_cyl, 20.0), mm(r_out))
+    extrude_symmetric(comp, sk_cyl, 44.0, adsk.fusion.FeatureOperations.JoinFeatureOperation)
 
     sk_bore = comp.sketches.add(pl_mid)
     sk_bore.name = 'Syringe_Cradle_Bore'
-    sk_bore.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_bore, 0.0, y_cyl, 23.5), mm(r_in))
-    extrude_symmetric(comp, sk_bore, 52.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
+    sk_bore.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk_bore, 0.0, y_cyl, 20.0), mm(r_in))
+    extrude_symmetric(comp, sk_bore, 48.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
     half_open = 0.425 * CFG['syringe_od']
     half_flare = 0.58 * CFG['syringe_od']
     sk_open = comp.sketches.add(pl_mid)
     sk_open.name = 'Syringe_Snap_Throat'
     draw_closed_poly(sk_open, [
-        (-half_open, y_cyl, 23.5),
-        (half_open, y_cyl, 23.5),
-        (half_flare, y_cyl + r_out + 2.0, 23.5),
-        (-half_flare, y_cyl + r_out + 2.0, 23.5),
+        (-half_open, y_cyl, 20.0),
+        ( half_open, y_cyl, 20.0),
+        ( half_flare, y_cyl + r_out + 2.0, 20.0),
+        (-half_flare, y_cyl + r_out + 2.0, 20.0),
     ])
-    extrude_symmetric(comp, sk_open, 52.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
+    extrude_symmetric(comp, sk_open, 48.0, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
 
 def build_vacuum_nozzle_adapter(root: adsk.fusion.Component) -> None:
@@ -834,12 +1050,12 @@ def build_vacuum_nozzle_adapter(root: adsk.fusion.Component) -> None:
         sk.sketchCurves.sketchCircles.addByCenterRadius(wpt(sk, 0.0, yc, z_mid_mm), mm(radius_mm))
         extrude_symmetric(comp, sk, height_mm, op)
 
-    add_cyl('Clamping_Barrel', 22.0, 66.0, r_barrel, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
+    add_cyl('Clamping_Barrel', 17.0, 56.0, r_barrel, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
     add_cyl('Luer_Tip_Nose', -16.0, 10.0, 3.4, adsk.fusion.FeatureOperations.JoinFeatureOperation)
-    add_cyl('Axial_Stop_Collar', 56.75, 3.5, 5.5, adsk.fusion.FeatureOperations.JoinFeatureOperation)
-    add_cyl('Vacuum_Hose_Stem', 64.5, 12.0, 2.25, adsk.fusion.FeatureOperations.JoinFeatureOperation)
-    add_cyl('Vacuum_Hose_Barb_Ring', 66.0, 3.0, 2.65, adsk.fusion.FeatureOperations.JoinFeatureOperation)
-    add_cyl('Internal_Vacuum_Airway', 24.75, 93.5, 1.1, adsk.fusion.FeatureOperations.CutFeatureOperation)
+    add_cyl('Axial_Stop_Collar', 46.75, 3.5, 5.5, adsk.fusion.FeatureOperations.JoinFeatureOperation)
+    add_cyl('Vacuum_Hose_Stem', 54.5, 12.0, 2.25, adsk.fusion.FeatureOperations.JoinFeatureOperation)
+    add_cyl('Vacuum_Hose_Barb_Ring', 56.0, 3.0, 2.65, adsk.fusion.FeatureOperations.JoinFeatureOperation)
+    add_cyl('Internal_Vacuum_Airway', 19.75, 83.5, 1.1, adsk.fusion.FeatureOperations.CutFeatureOperation)
     add_cyl('Luer_Slip_Socket', -17.5, 9.0, 2.15, adsk.fusion.FeatureOperations.CutFeatureOperation)
 
 
@@ -870,12 +1086,13 @@ def run(context):
 
         if ui:
             ui.messageBox(
-                'Created Prusa MINI PnP Head in a new file:\n\n'
-                '1. PnP_Carriage_Base (2-piece LM8UU cradles; 32x32mm grids; sensor at X=32.5, Y=22.66, Z=-15.5..+2.5)\n'
-                '2. PnP_Upper_Belt_Bearing_Clamp (unified belt clamp + upper LM8UU cap)\n'
-                '3. PnP_Lower_Bearing_Clamp (lower LM8UU cap + hook-tab)\n'
-                '4. PnP_Universal_Flex_Syringe_Mount (X=+/-16.5, Z=12.5 & 32.5)\n'
-                '5. PnP_Sized_Syringe_Mount (X=+/-16.5, Z=12.5 & 32.5)\n'
+                'Created Prusa MINI PnP Head (Symmetric Toothed Upper & Lower Belt Clamps) in a new file:\n\n'
+                f'1. PnP_Carriage_Base (rod_spacing={CFG["rod_spacing"]}mm, belt_spacing={CFG["belt_spacing"]}mm, Y_belt=0.0; '
+                f'full-circle rod bores; 12 GT2 teeth upper & lower; cap nut holes at X=+/-6.5; M12 CHE12 sensor)\n'
+                '2. PnP_Upper_Belt_Bearing_Clamp (unified Y=0 belt pinch wings + upper LM8UU cap)\n'
+                '3. PnP_Lower_Bearing_Clamp (unified Y=0 belt pinch wings + lower LM8UU cap)\n'
+                '4. PnP_Universal_Flex_Syringe_Mount (X=+/-16.5, Z=6.5 & 26.5)\n'
+                '5. PnP_Sized_Syringe_Mount (X=+/-16.5, Z=6.5 & 26.5)\n'
                 '6. PnP_Vacuum_Nozzle_Adapter'
             )
 
