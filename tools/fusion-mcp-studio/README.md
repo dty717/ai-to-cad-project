@@ -4,7 +4,7 @@ This document records the JSON-RPC initialization and `tools/list` exchange for 
 
 ## 1. Initialize the session
 
-### Request (`req1`)
+### Initialize request
 
 ```json
 {
@@ -22,7 +22,7 @@ This document records the JSON-RPC initialization and `tools/list` exchange for 
 }
 ```
 
-### Response (`res1`)
+### Initialize response
 
 ```json
 {
@@ -51,7 +51,7 @@ The response confirms protocol `2024-11-05`, advertises no resource subscription
 
 ## 2. Discover available tools
 
-### Request (`req2`)
+### Tool-list request
 
 ```json
 {
@@ -62,7 +62,7 @@ The response confirms protocol `2024-11-05`, advertises no resource subscription
 }
 ```
 
-### Response (`res2`)
+### Tool-list response
 
 The response contains four tools:
 
