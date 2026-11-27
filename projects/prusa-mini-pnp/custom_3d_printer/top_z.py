@@ -174,15 +174,20 @@ def run(context):
         extrusion_len = 289.0
 
         nema17_w = 44.0                # X: -22.0 .. +22.0 (>= 42.3 mm 17HS4401S face)
-        total_height = 17.0            # Z:   0.0 .. +17.0 mm
+        total_height = 17.0            # Z:   0.0 .. +17.0 mm above 3030
 
         # Measured 8mm smooth rod positions (40.0 / 60.0 / 80.0 mm from Y=0)
+        # Rod length equals extrusion_len; bottom sits 4.5 mm deep in opposite plate hole -> Z=-4.5..-293.5
         rod_dia = 8.0
         rod_edge_from_3030 = 6.0                           # Measured 39.83 -> 40.0 mm
         rod_to_rod_spacing = 40.0                          # Measured 39.97 -> 40.0 mm
-        rod_len = 341.0
+        opposite_rod_hole_depth = 4.5                      # 4-5 mm deep hole at bottom plate
+        rod_len = extrusion_len                            # 289.0 mm (same height as Extrusion_3030)
+        rod_top_z = -opposite_rod_hole_depth               # -4.5 mm
         rod_bore_dia = 8.2
-        rod_bore_depth = total_height - 3.5                # 13.5 mm blind sockets (3.5 mm roof)
+        rod_bore_depth = 13.5                              # Socket depth into lower block (Z=-18.0..-4.5)
+        lower_drop_h = opposite_rod_hole_depth + rod_bore_depth  # 18.0 mm below Z=0 on rod/motor end
+        lower_start_y = 32.0                               # 2.0 mm clearance in front of Extrusion_3030
 
         rod_b_y = extrusion_size + rod_edge_from_3030 + rod_dia / 2.0  # 40.0 mm
         motor_y = rod_b_y + rod_to_rod_spacing / 2.0                   # 60.0 mm
@@ -199,12 +204,12 @@ def run(context):
         motor_boss_dia = 22.0
         motor_boss_h = 2.0
         leadscrew_dia = 8.0
-        leadscrew_clear_dia = 13.0                         # Enlarged center leadscrew bore
+        leadscrew_clear_dia = 15.0                         # Enlarged center leadscrew bore
         leadscrew_len = 295.0
 
         m3_clear_dia = 3.4
         m3_cbore_dia = 6.4                                 # Enlarged M3 socket head counterbore
-        m3_cbore_depth = 5.0                               # 12.0 mm flange -> 4.0 mm engagement with M3x16
+        m3_flange_top_z = 5.0                              # 12.0 mm flange -> 4.0 mm engagement with M3x16
 
         motor_bolt_pts = [
             (-nema17_bolt_half, motor_y - nema17_bolt_half),
@@ -230,31 +235,31 @@ def run(context):
             (-m5_half_pitch, ear_front_y),                 # (-11.4, 26.4)
         ]
         m5_clear_dia = 5.4
-        m5_cbore_dia = 9.2
+        m5_cbore_dia = 9.6                                 # Updated M5 counterbore diameter
         m5_cbore_depth = 11.0                              # Leaves 6.0 mm flange (10 mm M5x16r tap depth)
-        ear_r = 6.8                                        # Ø13.6 mm round lobes (2.2 mm wall around M5 cbore)
+        ear_r = 6.8                                        # Ø13.6 mm round lobes (2.0 mm wall around Ø9.6 cbore)
         waist_x = 16.0                                     # Waist between front & back lobes (outside 3030)
 
-        # Top wire groove (Z=12.5..17) along X=0 corridor into +X 3030 T-slot (clears Rod B)
+        # Top wire groove (Z=12.5..17) along X=0 corridor into +X 3030 T-slot
         groove_width = 6.0
         groove_depth = 4.5
         groove_path = [
-            (0.0, 32.0),                                   # Clears Rod B blind socket (Y>=35.9)
+            (0.0, 34.5),                                   # Exits in front of 17HS4401S -Y face
             (0.0, 15.0),                                   # Straight down center between ±11.4 M5 heads
             (waist_x + 0.5, 15.0),                         # Exits through +X waist into 3030 T-slot
         ]
 
-        # Pinch slits + horizontal M3x20 rod-clamp bolts & M3nS square nuts
-        # Placed at Z=9.0, X=+10.0 so nuts clear Z=14..17 pilot pocket, pilot radius (11.3 mm), and motor cbore (Z=0..5)
+        # Pinch slits + horizontal M3x30 rod-clamp bolts & M3nS square nuts inside rod grip zone (Z=-18..-4.5)
         pinch_slit_w = 1.2
-        side_hole_ys = [50.0, 70.0]                        # Clears Ø13.0 leadscrew (53.5..66.5) & M3 shafts (46.2/73.8)
-        side_hole_z = 9.0
+        pinch_slit_top_z = 2.0                             # Z=-18..+2 (keeps top 15 mm rigid under motor)
+        side_hole_ys = [50.0, 70.0]                        # Centered between rods & leadscrew
+        side_hole_z = -11.0                                # Centered on Z=-18..-4.5 rod socket zone
         side_cbore_dia = 5.8
-        side_cbore_x_seat = -9.0                           # 20.0 mm M3x20 reaches X=+11.0 through nut at +10.0
+        side_cbore_x_seat = -19.0                          # Outside -18.7 motor cbore; M3x30 reaches X=+11.0
         m3ns_width = 5.6
         m3ns_thickness = 2.2
-        m3ns_x_center = 10.0                               # 11.45 mm from (0,60) -> outside R=11.3 pilot pocket
-        m3ns_top_z = side_hole_z + m3ns_width / 2.0        # 11.8 mm (2.2 mm roof under pilot pocket Z=14..17)
+        m3ns_x_center = 6.5                                # Clears slit (0.6), leadscrew (6.5 R), & +X motor cbore (12.3)
+        m3ns_top_z = side_hole_z + m3ns_width / 2.0        # -8.2 mm
 
         # =====================================================================
         # COMPONENT 1: MINI_z_top (Z-Axis Top Mount)
@@ -354,8 +359,48 @@ def run(context):
         main_body = body_ext.bodies.item(0)
         main_body.name = "MINI_z_top_Body"
 
-        # Smooth vertical corner fillets along motor flare/shoulders and ear-waist transitions
-        for y_min, y_max, f_rad in [(29.5, 83.0, 3.0), (7.0, 23.0, 2.0)]:
+        # Lower downward rod-socket block (Z=-18.0..0.0, Y>=32.0 so it clears Extrusion_3030)
+        t_flare = (lower_start_y - ear_front_flare_y) / (motor_start_y - ear_front_flare_y)
+        flare_lower_x = flare_x + t_flare * (sx - flare_x)
+
+        sk_lower = comp_top.sketches.add(comp_top.xYConstructionPlane)
+        sk_lower.name = "Lower_Rod_Mount_Block"
+        l_lines = sk_lower.sketchCurves.sketchLines
+        l_arcs = sk_lower.sketchCurves.sketchArcs
+        l_first = l_lines.addByTwoPoints(
+            pt(-flare_lower_x, lower_start_y),
+            pt(flare_lower_x, lower_start_y),
+        )
+        l_prev = l_first
+        for px, py in [
+            (sx, motor_start_y),
+            (sx, shoulder_y),
+            (tan_x, tan_y),
+        ]:
+            l_prev = l_lines.addByTwoPoints(l_prev.endSketchPoint, pt(px, py))
+        l_nose = l_arcs.addByThreePoints(
+            l_prev.endSketchPoint,
+            pt(0.0, total_length),
+            pt(-tan_x, tan_y),
+        )
+        l_prev = l_nose
+        for px, py in [
+            (-sx, shoulder_y),
+            (-sx, motor_start_y),
+        ]:
+            l_prev = l_lines.addByTwoPoints(l_prev.endSketchPoint, pt(px, py))
+        l_lines.addByTwoPoints(l_prev.endSketchPoint, l_first.startSketchPoint)
+
+        add_extrude(
+            comp_top,
+            sk_lower,
+            lower_drop_h,
+            adsk.fusion.FeatureOperations.JoinFeatureOperation,
+            adsk.fusion.ExtentDirections.NegativeExtentDirection,
+        )
+
+        # Smooth vertical corner fillets along motor shoulders, flare corners, and ear-waist transitions
+        for y_min, y_max, f_rad in [(36.0, 83.0, 3.0), (7.0, 23.0, 2.0)]:
             try:
                 fillets = comp_top.features.filletFeatures
                 edge_coll = adsk.core.ObjectCollection.create()
@@ -398,9 +443,10 @@ def run(context):
             pass
 
         top_plane = create_offset_xy_plane(comp_top, total_height)
+        bot_lower_plane = create_offset_xy_plane(comp_top, -lower_drop_h)
 
-        # 8mm smooth rod blind sockets (13.5 mm deep from bottom, solid 3.5 mm roof under motor)
-        sk_rods = comp_top.sketches.add(comp_top.xYConstructionPlane)
+        # 8mm smooth rod blind sockets (13.5 mm deep upward from Z=-18.0 to Z=-4.5)
+        sk_rods = comp_top.sketches.add(bot_lower_plane)
         sk_rods.name = "Smooth_Rod_Sockets"
         for rx, ry in rod_pts:
             draw_circle(sk_rods, rx, ry, rod_bore_dia)
@@ -412,7 +458,7 @@ def run(context):
             adsk.fusion.ExtentDirections.PositiveExtentDirection,
         )
 
-        # 17HS4401S pilot pocket (3mm deep on top) + larger leadscrew through-bore (Ø13.0 mm)
+        # 17HS4401S pilot pocket (3mm deep on top) + Ø13.0 mm leadscrew through-bore
         sk_pilot = comp_top.sketches.add(top_plane)
         sk_pilot.name = "NEMA17_Pilot_Pocket"
         draw_circle(sk_pilot, 0.0, motor_y, motor_pilot_dia)
@@ -430,37 +476,37 @@ def run(context):
         add_extrude(
             comp_top,
             sk_lead,
-            total_height + 1.0,
+            total_height + lower_drop_h + 1.0,
             adsk.fusion.FeatureOperations.CutFeatureOperation,
             adsk.fusion.ExtentDirections.NegativeExtentDirection,
         )
 
-        # 4x M3 through-holes & enlarged Ø6.4 mm bottom counterbores (Z=0..5.0 for M3x16)
-        sk_m3_motor = comp_top.sketches.add(comp_top.xYConstructionPlane)
+        # 4x M3 through-holes & Ø6.4 mm bottom counterbores (Z=-18.0..+5.0 for M3x16)
+        sk_m3_motor = comp_top.sketches.add(bot_lower_plane)
         sk_m3_motor.name = "NEMA17_0deg_M3_Through_Holes"
         for bx, by in motor_bolt_pts:
             draw_circle(sk_m3_motor, bx, by, m3_clear_dia)
         add_extrude(
             comp_top,
             sk_m3_motor,
-            total_height + 1.0,
+            total_height + lower_drop_h + 1.0,
             adsk.fusion.FeatureOperations.CutFeatureOperation,
             adsk.fusion.ExtentDirections.PositiveExtentDirection,
         )
 
-        sk_m3_cbore = comp_top.sketches.add(comp_top.xYConstructionPlane)
+        sk_m3_cbore = comp_top.sketches.add(bot_lower_plane)
         sk_m3_cbore.name = "NEMA17_0deg_M3_Counterbores"
         for bx, by in motor_bolt_pts:
             draw_circle(sk_m3_cbore, bx, by, m3_cbore_dia)
         add_extrude(
             comp_top,
             sk_m3_cbore,
-            m3_cbore_depth,
+            lower_drop_h + m3_flange_top_z,
             adsk.fusion.FeatureOperations.CutFeatureOperation,
             adsk.fusion.ExtentDirections.PositiveExtentDirection,
         )
 
-        # 3030 extrusion 4x M5 mounting holes & counterbores (22.8 x 22.8 mm pitch)
+        # 3030 extrusion 4x M5 mounting holes & Ø9.6 mm counterbores (22.8 x 22.8 mm pitch)
         sk_m5_thru = comp_top.sketches.add(top_plane)
         sk_m5_thru.name = "Extrusion_M5_Through_Holes"
         for hx, hy in m5_holes:
@@ -523,43 +569,43 @@ def run(context):
             adsk.fusion.ExtentDirections.NegativeExtentDirection,
         )
 
-        # Horizontal rod-clamp pinch slits along X=0 (between rods & Ø13.0 center bore)
-        sk_slits = comp_top.sketches.add(comp_top.xYConstructionPlane)
+        # Horizontal rod-clamp pinch slits along X=0 (Z=-18.0..+2.0 around rod sockets)
+        sk_slits = comp_top.sketches.add(bot_lower_plane)
         sk_slits.name = "Rod_Clamp_Pinch_Slits"
         lead_r = leadscrew_clear_dia / 2.0
         sk_slits.sketchCurves.sketchLines.addTwoPointRectangle(
-            pt(-pinch_slit_w / 2.0, rod_b_y),
-            pt(pinch_slit_w / 2.0, motor_y - lead_r),
+            sketch_pt_2d(sk_slits, -pinch_slit_w / 2.0, rod_b_y),
+            sketch_pt_2d(sk_slits, pinch_slit_w / 2.0, motor_y - lead_r),
         )
         sk_slits.sketchCurves.sketchLines.addTwoPointRectangle(
-            pt(-pinch_slit_w / 2.0, motor_y + lead_r),
-            pt(pinch_slit_w / 2.0, rod_a_y),
+            sketch_pt_2d(sk_slits, -pinch_slit_w / 2.0, motor_y + lead_r),
+            sketch_pt_2d(sk_slits, pinch_slit_w / 2.0, rod_a_y),
         )
         add_extrude(
             comp_top,
             sk_slits,
-            total_height + 1.0,
+            lower_drop_h + pinch_slit_top_z,
             adsk.fusion.FeatureOperations.CutFeatureOperation,
             adsk.fusion.ExtentDirections.PositiveExtentDirection,
         )
 
-        # M3nS square nut pockets on +X side (X=+10.0, Z=0..11.8 -> clear of motor pilot & boss)
-        sk_nuts = comp_top.sketches.add(comp_top.xYConstructionPlane)
+        # M3nS square nut pockets on +X side (X=+6.5, Z=-18.0..-8.2 -> clear of motor & pilot)
+        sk_nuts = comp_top.sketches.add(bot_lower_plane)
         sk_nuts.name = "M3nS_Nut_Pockets"
         for sy in side_hole_ys:
             sk_nuts.sketchCurves.sketchLines.addTwoPointRectangle(
-                pt(m3ns_x_center - m3ns_thickness / 2.0, sy - m3ns_width / 2.0),
-                pt(m3ns_x_center + m3ns_thickness / 2.0, sy + m3ns_width / 2.0),
+                sketch_pt_2d(sk_nuts, m3ns_x_center - m3ns_thickness / 2.0, sy - m3ns_width / 2.0),
+                sketch_pt_2d(sk_nuts, m3ns_x_center + m3ns_thickness / 2.0, sy + m3ns_width / 2.0),
             )
         add_extrude(
             comp_top,
             sk_nuts,
-            m3ns_top_z,
+            m3ns_top_z + lower_drop_h,
             adsk.fusion.FeatureOperations.CutFeatureOperation,
             adsk.fusion.ExtentDirections.PositiveExtentDirection,
         )
 
-        # Horizontal M3x20 clamp through-holes + left-side counterbores (at Z=9.0 mm)
+        # Horizontal M3x30 clamp through-holes + left-side spotface counterbores (at Z=-11.0 mm)
         side_x_start = -nema17_w / 2.0 - 0.5
         side_plane = create_offset_yz_plane(comp_top, side_x_start)
         to_pos_x = (
@@ -660,10 +706,10 @@ def run(context):
         )
 
         # =====================================================================
-        # COMPONENT 3: Two 8mm Smooth Rods (Rod A at Y=80, Rod B at Y=40)
+        # COMPONENT 3: Two 8mm Smooth Rods (289 mm long, Z=-4.5..-293.5 mm)
         # =====================================================================
         comp_rods = add_subcomponent(root, "Smooth_Rods_8mm")
-        rod_top_plane = create_offset_xy_plane(comp_rods, rod_bore_depth)
+        rod_top_plane = create_offset_xy_plane(comp_rods, rod_top_z)
         sk_smooth_rods = comp_rods.sketches.add(rod_top_plane)
         sk_smooth_rods.name = "Smooth_Rods_Profile"
         for rx, ry in rod_pts:
@@ -784,12 +830,12 @@ def run(context):
         )
 
         # =====================================================================
-        # COMPONENT 6: Fasteners (4x M3x16, 4x M5x16r, 2x M3x20, 2x M3nS)
+        # COMPONENT 6: Fasteners (4x M3x16, 4x M5x16r, 2x M3x30, 2x M3nS)
         # =====================================================================
         comp_hw = add_subcomponent(root, "Fasteners_Hardware")
 
-        # 4x M3x16 bolts enter from bottom counterbores (Z=5) upward into 17HS4401S (Z=17..21)
-        m3_seat_plane = create_offset_xy_plane(comp_hw, m3_cbore_depth)
+        # 4x M3x16 bolts enter from bottom counterbore seat (Z=+5) upward into 17HS4401S (Z=17..21)
+        m3_seat_plane = create_offset_xy_plane(comp_hw, m3_flange_top_z)
         for idx, (bx, by) in enumerate(motor_bolt_pts):
             sk_h = comp_hw.sketches.add(m3_seat_plane)
             sk_h.name = f"M3x16_Head_{idx + 1}"
@@ -840,7 +886,7 @@ def run(context):
                 adsk.fusion.ExtentDirections.NegativeExtentDirection,
             )
 
-        # 2x M3nS square nuts at X=+10.0 (Y=50.0, 70.0, Z=9.0 -> completely clear of motor & pilot)
+        # 2x M3nS square nuts at X=+6.5 (Y=50.0, 70.0, Z=-11.0 -> inside lower rod clamp zone)
         nut_bot_plane = create_offset_xy_plane(comp_hw, side_hole_z - 2.7)
         for idx, sy in enumerate(side_hole_ys):
             sk_nut = comp_hw.sketches.add(nut_bot_plane)
@@ -858,7 +904,7 @@ def run(context):
             ).bodies.item(0)
             nut_body.name = f"M3nS_Nut_{idx + 1}"
 
-        # 2x M3x20 clamp screws entering from X=-9.0 through M3nS nuts at X=+10.0
+        # 2x M3x30 clamp screws entering from X=-19.0 through M3nS nuts at X=+6.5
         hw_side_plane = create_offset_yz_plane(comp_hw, side_cbore_x_seat)
         hw_to_pos_x = (
             adsk.fusion.ExtentDirections.PositiveExtentDirection
@@ -872,21 +918,21 @@ def run(context):
         )
         for idx, sy in enumerate(side_hole_ys):
             sk_cs = comp_hw.sketches.add(hw_side_plane)
-            sk_cs.name = f"M3x20_Shaft_{idx + 1}"
+            sk_cs.name = f"M3x30_Shaft_{idx + 1}"
             c2d = sk_cs.modelToSketchSpace(pt(side_cbore_x_seat, sy, side_hole_z))
             c2d.z = 0.0
             sk_cs.sketchCurves.sketchCircles.addByCenterRadius(c2d, mm(1.5))
             c_body = add_extrude(
                 comp_hw,
                 sk_cs,
-                20.0,
+                30.0,
                 adsk.fusion.FeatureOperations.NewBodyFeatureOperation,
                 hw_to_pos_x,
             ).bodies.item(0)
-            c_body.name = f"M3x20_Bolt_{idx + 1}"
+            c_body.name = f"M3x30_Bolt_{idx + 1}"
 
             sk_ch = comp_hw.sketches.add(hw_side_plane)
-            sk_ch.name = f"M3x20_Head_{idx + 1}"
+            sk_ch.name = f"M3x30_Head_{idx + 1}"
             c2d_h = sk_ch.modelToSketchSpace(pt(side_cbore_x_seat, sy, side_hole_z))
             c2d_h.z = 0.0
             sk_ch.sketchCurves.sketchCircles.addByCenterRadius(c2d_h, mm(2.7))
@@ -900,7 +946,7 @@ def run(context):
 
         app.activeViewport.fit()
         ui.messageBox(
-            "Created Z-Axis assembly (M3nS pockets moved to X=+10.0, Z=0..11.8 mm — zero overlap with pilot/motor; 4x M3x16 motor bolts)."
+            "Created Z-Axis assembly (m5_cbore_dia=9.6 mm; 289 mm rods sitting 4.5 mm lower than Extrusion_3030 with stepped lower rod-clamp sockets)."
         )
 
     except Exception:
